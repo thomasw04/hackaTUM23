@@ -1,4 +1,4 @@
-FROM rust:1.74
+FROM rust:1.74 as build
 
 RUN USER=root cargo new --bin usr/src/backend
 
@@ -10,9 +10,19 @@ COPY ./data/quality_factor_score.json ./data/quality_factor_score.json
 COPY ./data/service_provider_profile.json ./data/service_provider_profile.json
 COPY ./.cargo/config ./.cargo/config
 COPY .env .env
-COPY ./src ./src
 
 RUN cargo build --release
+RUN rm src/*.rs
+
+FROM rust:1.74
+
+WORKDIR /usr/src/backend
+
+COPY ./src ./src
+COPY --from=build /usr/src/backend .
+RUN cargo clean -p backend
+RUN cargo build --release
+
 
 EXPOSE 8000
 
