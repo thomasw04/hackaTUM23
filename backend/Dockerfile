@@ -10,6 +10,7 @@ COPY ./data/quality_factor_score.json ./data/quality_factor_score.json
 COPY ./data/service_provider_profile.json ./data/service_provider_profile.json
 COPY ./.cargo/config ./.cargo/config
 COPY .env .env
+COPY ./src ./src
 
 RUN cargo build --release
 
