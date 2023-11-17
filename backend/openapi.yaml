@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Craftsmen Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /craftsmen:
+    get:
+      summary: Retrieves a list of craftsmen based on postal code
+      parameters:
+        - in: query
+          name: postalcode
+          schema:
+            type: string
+          required: true
+          description: Postal code to filter craftsmen
+      responses:
+        '200':
+          description: List of craftsmen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+
+  /craftman/{craftman_id}:
+    patch:
+      summary: Updates a craftsman's profile information
+      parameters:
+        - in: path
+          name: craftman_id
+          schema:
+            type: integer
+          required: true
+          description: Unique ID of the craftsman
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchRequest'
+      responses:
+        '200':
+          description: Craftsman updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchResponse'
+
+components:
+  schemas:
+    Craftsman:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        rankingScore:
+          type: number
+
+    Response:
+      type: object
+      properties:
+        craftsmen:
+          type: array
+          items:
+            $ref: '#/components/schemas/Craftsman'
+
+    PatchRequest:
+      type: object
+      properties:
+        maxDrivingDistance:
+          type: number
+          nullable: true
+        profilePictureScore:
+          type: number
+          nullable: true
+        profileDescriptionScore:
+          type: number
+          nullable: true
+
+    PatchResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        updated:
+          type: object
+          properties:
+            maxDrivingDistance:
+              type: number
+            profilePictureScore:
+              type: number
+            profileDescriptionScore:
+              type: number
