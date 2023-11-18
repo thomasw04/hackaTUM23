@@ -13,12 +13,19 @@ where
     u32::from_str(&s).map_err(serde::de::Error::custom)
 }
 
-fn from_str_u8<'de, D>(deserializer: D) -> Result<u8, D::Error>
+fn group_str_to_u8<'de, D>(deserializer: D) -> Result<u8, D::Error>
 where
     D: serde::Deserializer<'de>,
 {
     let s = String::deserialize(deserializer)?;
-    u8::from_str(&s).map_err(serde::de::Error::custom)
+
+    // either group_a, group_b, group_c
+    match s.as_str() {
+        "group_a" => Ok(0),
+        "group_b" => Ok(1),
+        "group_c" => Ok(2),
+        _ => Err(serde::de::Error::custom("Invalid postcode extension distance group."))
+    }
 }
 
 fn from_str_f32<'de, D>(deserializer: D) -> Result<f32, D::Error>
@@ -75,7 +82,7 @@ pub struct Postcode {
     pub postcode: u32,
     pub lon: f64,
     pub lat: f64,
-    #[serde(deserialize_with = "from_str_u8")]
+    #[serde(deserialize_with = "group_str_to_u8")]
     pub postcode_extension_distance_group: u8,
 }
 
@@ -97,7 +104,8 @@ const INITIAL_POSTCODE_DATA: &'static str = include_str!("../data/postcode.json"
 const INITIAL_SERVICE_PROVIDER_DATA: &'static str = include_str!("../data/service_provider_profile.json");
 
 pub fn postcode_from_file() -> Result<HashMap<u32, Postcode>, &'static str> {
-    if let Ok(service_provider) = serde_json::from_str::<Vec<Postcode>>(INITIAL_POSTCODE_DATA) {
+    serde_json::from_str::<Vec<Postcode>>(INITIAL_POSTCODE_DATA) .unwrap();
+    if let Ok(service_provider) = serde_json::from_str::<Vec<Postcode>>(INITIAL_POSTCODE_DATA)  {
         Ok(service_provider.iter().map(|x| (x.postcode, (*x).to_owned())).collect())
     } else {
         Err("Failed to load postcode data.")

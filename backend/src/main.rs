@@ -46,17 +46,17 @@ async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<S
     let map: &Map = req.app_data().expect("Map not found!");
 
     let providers = map.get_service_providers(postalcode.parse().unwrap());
-    
+
     Ok(serde_json::to_string_pretty(&providers).unwrap())
 }
- 
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json").expect(
         "Could not read postcode data from file."
     );
 
-    let postcodes = data::postcode_from_file().unwrap_or(HashMap::new());
+    let postcodes = data::postcode_from_file().unwrap();
     let service_providers = data::provider_from_file().unwrap_or(HashMap::new());
     let map = Map::new(postcodes, service_providers);
 
@@ -69,6 +69,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(postcode_engine.clone())
             .app_data(map.clone())
             .service(zipcode_search)
+            .service(craftsmen_search)
             .route("/hey", web::get().to(manual_hello))
     })
     .bind(("0.0.0.0", 8000))?

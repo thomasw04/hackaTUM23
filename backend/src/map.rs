@@ -18,15 +18,15 @@ impl Into<InServiceProvider> for ServiceProvider {
         let angular_radius = self.max_driving_distance as f64 / 6371000.0;
         let delta_lon = (angular_radius.sin() / self.lat.cos()).asin();
 
-        InServiceProvider { 
-            id: self.id, 
+        InServiceProvider {
+            id: self.id,
             pos: (self.lon, self.lat),
             min: (self.lon - delta_lon, self.lat - angular_radius),
-            max: (self.lon + delta_lon, self.lat + angular_radius), 
-            max_driving_distance: self.max_driving_distance, 
+            max: (self.lon + delta_lon, self.lat + angular_radius),
+            max_driving_distance: self.max_driving_distance,
         }
     }
-} 
+}
 
 impl Into<(f64, f64)> for Postcode {
     fn into(self) -> (f64, f64) {
@@ -50,7 +50,7 @@ impl PointDistance for InServiceProvider {
     fn distance_2(&self, point: &<Self::Envelope as Envelope>::Point) -> <<Self::Envelope as Envelope>::Point as Point>::Scalar {
         let other_lon = point.get(0).unwrap();
         let other_lat = point.get(1).unwrap();
-    
+
         let sin_prod = self.pos.1.sin() * other_lat.sin();
         let cos_prod = self.pos.1.cos() * other_lat.cos() * (self.pos.0 - other_lon).cos();
         (sin_prod + cos_prod).acos() * 6371000.0
@@ -84,7 +84,7 @@ impl Map {
         let converted_providers: Vec<ServiceProvider> = service_providers.clone().into_values().collect();
 
         let a_tree: RTree<InServiceProvider> = RTree::bulk_load(converted_providers.iter().map(|x| (*x).clone().into()).collect());
-            
+
         let b_tree: RTree<InServiceProvider> = RTree::bulk_load(converted_providers.iter().map(|x| {
             let mut service_provider: InServiceProvider = (*x).clone().into();
             service_provider.max_driving_distance += 2000;
