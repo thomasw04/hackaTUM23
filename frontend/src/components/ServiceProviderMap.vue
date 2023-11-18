@@ -1,15 +1,15 @@
 <template>
-  <l-map :use-global-leaflet="false" v-model="zoomLvl" v-model:zoom="zoomLvl" :center="searchPLZCoords">
+  <l-map :use-global-leaflet="false" v-model="zoomLvl" v-model:zoom="zoomLvl" :center="searchPLZCoords as any">
     <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"></l-tile-layer>
 
     <template v-if="searchPLZCoords">
       <l-circle-marker
         v-if="searchRadius"
-        :lat-lng="searchPLZCoords"
+        :lat-lng="searchPLZCoords as any"
         :radius="searchRadius"
         color="rgba(255,0,0,0.3)"
       />
-      <l-marker :lat-lng="searchPLZCoords" />
+      <l-marker :lat-lng="searchPLZCoords as any" />
     </template>
 
     <l-marker
