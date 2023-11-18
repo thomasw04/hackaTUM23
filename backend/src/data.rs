@@ -29,8 +29,7 @@ where
     f32::from_str(&s).map_err(serde::de::Error::custom)
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct PostcodeInfo {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd)]pub struct PostcodeInfo {
     #[serde(deserialize_with = "from_str_u32")]
     zipcode: u32,
     // Friendly display name (e.g. "Garching bei München")
@@ -41,6 +40,33 @@ pub struct PostcodeInfo {
     longitude: f32,
 
     // There are other attributes we might want to use later, but don't need yet
+}
+
+impl Eq for PostcodeInfo {}
+
+impl Ord for PostcodeInfo {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.zipcode.cmp(&other.zipcode)
+    }
+}
+
+impl std::hash::Hash for PostcodeInfo {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.zipcode.hash(state);
+    }
+}
+
+use simsearch::SimSearch;
+
+pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
+    let mut engine: SimSearch<PostcodeInfo> = SimSearch::new();
+
+    for info in postcodes {
+        let search_str = info.zipcode.to_string() + " " + &info.place;
+        engine.insert(info.clone(), &search_str);
+    }
+
+    engine
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
