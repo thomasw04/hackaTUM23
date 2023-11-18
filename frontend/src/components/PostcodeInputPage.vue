@@ -61,7 +61,7 @@ export default defineComponent({
         // Assuming the response data is an array of Craftsman objects
         this.autocompleteResults = response;
         this.activeAutocompleteIndex = -1;
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.log("Autocomplete error:", e)
       } finally {
         this.isLoadingAutocomplete = false;

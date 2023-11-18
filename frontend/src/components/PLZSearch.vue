@@ -49,8 +49,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Map from './Map.vue';
-
 import { ServiceProvider } from '../models/results';
 
 
@@ -73,9 +71,6 @@ export default defineComponent({
       finalResults: [] as Array<ServiceProvider>,
       isLoadingFinalResults: false,
     };
-  },
-  components: {
-    Map,
   },
   mounted() {
     // Get query parameter from the router/URL
@@ -103,7 +98,7 @@ export default defineComponent({
         // Assuming the response data is an array of ServiceProvider objects
         this.finalResults = response;
         this.$router.push({ query: { q: queryCopy } });
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.log("Final results error:", e)
       } finally {
         this.isLoadingFinalResults = false;
