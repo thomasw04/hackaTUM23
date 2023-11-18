@@ -2,7 +2,7 @@
   <div class="search-page">
 
     <div style="position:relative; height:100%" v-if="previewCoords">
-      <SingleMap style="position:relative; min-height: 300px;" :coords="previewCoords" />
+      <SingleMap style="position:relative; min-height: 50vh;" :coords="previewCoords" />
     </div>
 
     <div class="field pt-2">
@@ -16,7 +16,7 @@
         <div id="search-suggestions" v-if="showAutocomplete">
           <ul>
             <li v-for="(result, index) in autocompleteResults" :key="result.zipcode" :class="{ 'is-active': index === activeAutocompleteIndex }">
-              <a class="navbar-item" @click="selectZipcode(result.zipcode)">
+              <a class="navbar-item" @click="selectZipcode(index)">
                 {{ result.zipcode }} {{ result.place }}
               </a>
             </li>
@@ -67,10 +67,12 @@ export default defineComponent({
         this.isLoadingAutocomplete = false;
       }
     },
-    selectZipcode(code: number) {
+    selectZipcode(index: number) {
+      this.setPreviewCoords(index);
+
       this.activeAutocompleteIndex = -1;
-      this.searchQuery = code.toString();
       this.showAutocomplete = false;
+      this.searchQuery = this.autocompleteResults[index].zipcode.toString();
     },
     handleArrowDown() {
       if (this.activeAutocompleteIndex < this.autocompleteResults.length - 1) {

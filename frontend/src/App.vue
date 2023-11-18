@@ -3,23 +3,14 @@ import Map from './components/Map.vue'
 </script>
 
 <template>
-  <nav class="navbar">
+  <nav class="navbar" style="background-color: #063773;">
     <div class="navbar-brand">
       <a class="home-link navbar-item" href="/">
         <img class="logo-image" src="/vite.svg" alt="Check24 Challenge thingy">
-      </a>
-    </div>
-
-    <div class="navbar-menu">
-      <div class="navbar-start">
-        <a class="navbar-item" href="/songs">
-          <span class="bd-emoji">ඞ</span> &nbsp;Amongs
+          <h1 class="navbar-item" style="font-style: italic; font-size: 2.5em; font-weight: 900; color: #fff">
+            Not Check24
+          </h1>
         </a>
-      </div>
-
-      <span class="navbar-item">
-        <progress id="main-progress" class="progress is-small" style="display: none;"></progress>
-      </span>
     </div>
   </nav>
 
@@ -29,6 +20,7 @@ import Map from './components/Map.vue'
 <style>
 @import "../node_modules/bulma/css/bulma.min.css";
 @import "../node_modules/bulma-prefers-dark/css/bulma-prefers-dark.min.css";
+@import "assets/wireframe.css";
 
 .navbar {
   position: sticky;
@@ -57,6 +49,10 @@ import Map from './components/Map.vue'
   a.navbar-item:focus, a.navbar-item:focus-within, a.navbar-item:hover {
       background-color: #2e2e2e !important;
       color: #aecdff !important;
+  }
+
+  p {
+    color: #fff !important;
   }
 }
 </style>
