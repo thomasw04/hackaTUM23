@@ -21,7 +21,14 @@
       </form>
     </div>
 
-    <div class="card">
+    <div>
+      <progress v-if="isLoadingFinalResults" class="progress is-large is-info"></progress>
+      <p v-if="finalResults.length > 0">
+        Showing {{ finalResults.length }} results for <b>{{ finalResultsFor }}</b>
+      </p>
+    </div>
+
+    <div class="card" v-for="provider in finalResults" :key="provider.id">
       <header class="card-header">
         <p class="card-header-title">
           {{ provider.first_name }} {{ provider.last_name }}
@@ -95,7 +102,8 @@ export default defineComponent({
       showAutocomplete: false,
       provider: alphonso,
 
-      finalResults: [],
+      finalResults: [alphonso] as Array<ServiceProvider>,
+      finalResultsFor: '',
       isLoadingFinalResults: false,
     };
   },
@@ -122,14 +130,25 @@ export default defineComponent({
     },
     async loadResults() {
       console.log("Loading results for query:", this.searchQuery);
-
+      let queryCopy = this.searchQuery;
       this.isLoadingFinalResults = true;
+
+      setTimeout(() => {
+        this.finalResults = Array(Math.floor(Math.random() * 15)).fill(alphonso);
+        this.finalResultsFor = queryCopy;
+        this.isLoadingFinalResults = false;
+        this.showAutocomplete = false;
+      }, Math.random() * 1250);
+
+      return;
+
       try {
         // TODO: actually fetch craftsmen
         let response = await fetch(`/zipcode/search?q=${this.searchQuery}`)
           .then(response => response.json());
-        // Assuming the response data is an array of Craftsman objects
+        // Assuming the response data is an array of ServiceProvider objects
         this.finalResults = response;
+        this.finalResultsFor = queryCopy;
         this.showAutocomplete = false;
       } catch (e: any) {
         console.log("Final results error:", e)
@@ -140,7 +159,7 @@ export default defineComponent({
     selectZipcode(code: number) {
       this.activeAutocompleteIndex = -1;
       this.searchQuery = code.toString();
-      this.showAutocomplete = false;
+      this.loadResults();
     },
     handleArrowDown() {
       if (this.activeAutocompleteIndex < this.autocompleteResults.length - 1) {
