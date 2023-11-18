@@ -1,30 +1,9 @@
 <template>
   <div class="search-page">
-    <div class="field">
-      <label class="label">Search:</label>
-      <form id="search-form" action="/search" @submit.prevent>
-        <div id="search-container" class="control has-icons-left has-icons-right is-large" :class="{'is-loading': isLoadingAutocomplete}">
-          <input autofocus id="search-bar" v-model="searchQuery" class="input is-large" type="text" placeholder="Postal code" autocomplete="off" @input="loadAutocomplete" @keydown.down.prevent="handleArrowDown" @keydown.up.prevent="handleArrowUp" @keydown.enter="handleEnter" />
-          <span class="icon is-small is-left">🔍</span>
-          <span class="icon is-small is-right">{{ }}</span>
-        </div>
-
-        <div id="search-suggestions" v-if="showAutocomplete">
-          <ul>
-            <li v-for="(result, index) in autocompleteResults" :key="result.zipcode" :class="{ 'is-active': index === activeAutocompleteIndex }">
-              <a class="navbar-item" @click="selectZipcode(result.zipcode)">
-                {{ result.zipcode }} {{ result.place }}
-              </a>
-            </li>
-          </ul>
-        </div>
-      </form>
-    </div>
-
     <div>
-      <progress v-if="isLoadingFinalResults" class="progress is-large is-info"></progress>
+      <progress v-if="isLoadingFinalResults" class="progress is-large"></progress>
       <p v-if="finalResults.length > 0">
-        Showing {{ finalResults.length }} results for <b>{{ finalResultsFor }}</b>
+        Showing {{ finalResults.length }} results for <b>{{ queryPLZ }}</b>
       </p>
     </div>
 
@@ -34,6 +13,7 @@
       </div>
       <div class="message-body">
         No results could be found for your search query.
+        Go back to the <a class="has-text-weight-bold" href="/">home page</a> and try again.
       </div>
     </article>
 
@@ -71,24 +51,7 @@
 import { defineComponent } from 'vue';
 import Map from './Map.vue';
 
-interface ZipcodeSearchResultItem {
-  zipcode: number;
-  place: string;
-  latitude: number;
-  longitude: number;
-}
-
-interface ServiceProvider {
-  id: number;
-  first_name: string;
-  last_name: string;
-  city: string;
-  street: string;
-  house_number: string;
-  lon: number;
-  lat: number;
-  max_driving_distance: number;
-}
+import { ServiceProvider } from '../models/results';
 
 
 var alphonso: ServiceProvider = {
@@ -106,15 +69,8 @@ var alphonso: ServiceProvider = {
 export default defineComponent({
   data() {
     return {
-      searchQuery: '85748', // just a default value
-      autocompleteResults: [] as Array<ZipcodeSearchResultItem>,
-      activeAutocompleteIndex: -1,
-      isLoadingAutocomplete: false,
-      showAutocomplete: false,
-      provider: alphonso,
-
+      queryPLZ: '',
       finalResults: [] as Array<ServiceProvider>,
-      finalResultsFor: '',
       isLoadingFinalResults: false,
     };
   },
@@ -123,38 +79,19 @@ export default defineComponent({
   },
   mounted() {
     // Get query parameter from the router/URL
-    this.searchQuery = this.$route.query.q?.toString() ?? '';
-
+    this.queryPLZ = this.$route.query.q?.toString() ?? '';
     this.loadResults()
   },
   methods: {
-    async loadAutocomplete() {
-      this.isLoadingAutocomplete = true;
-      this.showAutocomplete = true;
-
-      try {
-
-        let response = await fetch(`/zipcode/search?q=${this.searchQuery}`)
-          .then(response => response.json());
-        // Assuming the response data is an array of Craftsman objects
-        this.autocompleteResults = response;
-        this.activeAutocompleteIndex = -1;
-      } catch (e: any) {
-        console.log("Autocomplete error:", e)
-      } finally {
-        this.isLoadingAutocomplete = false;
-      }
-    },
     async loadResults() {
-      console.log("Loading results for query:", this.searchQuery);
-      let queryCopy = this.searchQuery;
+      console.log("Loading results for query:", this.queryPLZ);
+      let queryCopy = this.queryPLZ;
       this.isLoadingFinalResults = true;
 
       setTimeout(() => {
         this.finalResults = Array(Math.floor(Math.random() * 15)).fill(alphonso);
         this.finalResultsFor = queryCopy;
         this.isLoadingFinalResults = false;
-        this.showAutocomplete = false;
         this.$router.push({ query: { q: queryCopy } });
       }, Math.random() * 1250);
 
@@ -162,40 +99,18 @@ export default defineComponent({
 
       try {
         // TODO: actually fetch craftsmen
-        let response = await fetch(`/zipcode/search?q=${this.searchQuery}`)
+        let response = await fetch(`/zipcode/search?q=${this.queryPLZ}`)
           .then(response => response.json());
         // Assuming the response data is an array of ServiceProvider objects
         this.finalResults = response;
         this.finalResultsFor = queryCopy;
-        this.showAutocomplete = false;
         this.$router.push({ query: { q: queryCopy } });
       } catch (e: any) {
         console.log("Final results error:", e)
       } finally {
         this.isLoadingFinalResults = false;
       }
-    },
-    selectZipcode(code: number) {
-      this.activeAutocompleteIndex = -1;
-      this.searchQuery = code.toString();
-      this.loadResults();
-    },
-    handleArrowDown() {
-      if (this.activeAutocompleteIndex < this.autocompleteResults.length - 1) {
-        this.activeAutocompleteIndex++;
-      }
-    },
-    handleArrowUp() {
-      if (this.activeAutocompleteIndex >= 0) {
-        this.activeAutocompleteIndex--;
-      }
-    },
-    handleEnter() {
-      if (this.activeAutocompleteIndex >= 0) {
-        this.selectZipcode(this.autocompleteResults[this.activeAutocompleteIndex].zipcode);
-      }
-      this.loadResults();
-    },
+    }
   },
 });
 </script>
@@ -225,10 +140,19 @@ export default defineComponent({
   border-top: none;
 }
 
+
+.progress {
+    background-image: linear-gradient(to right, #00d1b2 30%, #ededed 30%) !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .is-active {
     background-color: #4f4f4f !important;
     color: #aecdff !important;
+  }
+
+  .progress {
+      background-image: linear-gradient(to right, #00d1b2 30%, #363636 30%) !important;
   }
 }
 </style>

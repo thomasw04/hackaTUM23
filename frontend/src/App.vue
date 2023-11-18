@@ -6,7 +6,7 @@ import Map from './components/Map.vue'
   <nav class="navbar" style="background-color: #063773;">
     <div class="navbar-brand">
       <a class="home-link navbar-item" href="/">
-        <img class="logo-image" src="/vite.svg" alt="Check24 Challenge thingy">
+        <img class="logo-image" src="/Stonks_emoji.png" alt="Check24 Challenge thingy">
           <h1 class="navbar-item" style="font-style: italic; font-size: 2.5em; font-weight: 900; color: #fff">
             Not Check24
           </h1>
@@ -22,6 +22,10 @@ import Map from './components/Map.vue'
 @import "../node_modules/bulma-prefers-dark/css/bulma-prefers-dark.min.css";
 @import "assets/wireframe.css";
 
+.logo-image {
+  max-height: 2.75rem !important;
+}
+
 body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: medium;
@@ -33,21 +37,6 @@ body {
   height: 3%;
   top: 0;
   filter: drop-shadow(0 0 .25rem var(--navbar-drop-shadow));
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
 }
 
 @media (prefers-color-scheme: dark) {
