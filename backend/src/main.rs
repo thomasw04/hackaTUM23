@@ -2,12 +2,13 @@ use std::sync::Mutex;
 
 use actix_web::patch;
 use actix_web::{
-    get, post,
+    get,
     web::{self},
     App, HttpRequest, HttpResponse, HttpServer, Responder, Result,
 };
 
 use data::PostcodeInfo;
+use env_logger::Env;
 use map::Map;
 use serde::{Deserialize, Serialize};
 use simsearch::SimSearch;
@@ -173,6 +174,8 @@ pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
+
     let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json")
         .expect("Could not read postcode data from file.");
 

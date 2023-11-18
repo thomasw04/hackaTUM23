@@ -246,15 +246,6 @@ impl Map {
         )
     }
 
-    pub fn add_service_provider(&mut self, service_provider: &ServiceProvider) {
-        self.a_tree.insert(service_provider.clone().into());
-        let mut tmp = service_provider.clone();
-        tmp.max_driving_distance += 2000;
-        self.b_tree.insert(tmp.clone().into());
-        tmp.max_driving_distance += 3000;
-        self.c_tree.insert(tmp.into());
-    }
-
     pub fn service_provider_by_id(&self, id: u32) -> Option<ServiceProvider> {
         self.service_providers.get(&id).cloned()
     }
