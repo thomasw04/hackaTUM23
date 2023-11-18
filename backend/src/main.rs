@@ -201,6 +201,7 @@ async fn main() -> std::io::Result<()> {
             .service(zipcode_search)
             .service(craftsmen_search)
             .service(craftsmen_search_detailed)
+            .service(craftsmen_update)
     })
     .bind(("0.0.0.0", 8000))?
     .run()
