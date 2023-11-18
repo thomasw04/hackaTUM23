@@ -1,6 +1,10 @@
 use std::collections::HashMap;
 
-use actix_web::{get, post, web::{self}, App, HttpRequest, HttpResponse, HttpServer, Responder, Result};
+use actix_web::{
+    get, post,
+    web::{self},
+    App, HttpRequest, HttpResponse, HttpServer, Responder, Result,
+};
 use data::PostcodeInfo;
 use map::Map;
 use serde::{Deserialize, Serialize};
@@ -67,9 +71,8 @@ pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json").expect(
-        "Could not read postcode data from file."
-    );
+    let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json")
+        .expect("Could not read postcode data from file.");
 
     let postcodes = data::postcode_from_file().unwrap();
     let service_providers = data::provider_from_file().unwrap();

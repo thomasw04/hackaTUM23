@@ -1,13 +1,15 @@
-use std::{fs, collections::HashMap};
 use serde_json;
 use std::error::Error;
+use std::{collections::HashMap, fs};
 
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub enum PostcodeGroup {
-    GroupA, GroupB, GroupC
+    GroupA,
+    GroupB,
+    GroupC,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd)]
@@ -20,7 +22,6 @@ pub struct PostcodeInfo {
     pub latitude: f32,
     #[serde(deserialize_with = "from_str_f32")]
     pub longitude: f32,
-
     // There are other attributes we might want to use later, but don't need yet
 }
 
@@ -43,7 +44,7 @@ pub struct Postcode {
 pub struct QualityFactor {
     pub profile_id: u32,
     pub profile_picture_score: f64,
-    pub profile_description_score: f64
+    pub profile_description_score: f64,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -61,7 +62,7 @@ pub struct ServiceProvider {
     #[serde(deserialize_with = "to_radians")]
     pub lat: f64,
 
-    pub max_driving_distance: u64
+    pub max_driving_distance: u64,
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -87,7 +88,8 @@ impl std::hash::Hash for PostcodeInfo {
 
 //Move initial data into binary for faster startup times.
 const INITIAL_POSTCODE_DATA: &'static str = include_str!("../data/postcode.json");
-const INITIAL_SERVICE_PROVIDER_DATA: &'static str = include_str!("../data/service_provider_profile.json");
+const INITIAL_SERVICE_PROVIDER_DATA: &'static str =
+    include_str!("../data/service_provider_profile.json");
 const INITIAL_QUALITY_DATA: &'static str = include_str!("../data/quality_factor_score.json");
 
 //File parsing functions
@@ -95,8 +97,11 @@ const INITIAL_QUALITY_DATA: &'static str = include_str!("../data/quality_factor_
 pub fn postcode_from_file() -> Result<HashMap<u32, Postcode>, String> {
     let res = serde_json::from_str::<Vec<Postcode>>(INITIAL_POSTCODE_DATA);
 
-    if let Ok(service_provider) = res  {
-        Ok(service_provider.iter().map(|x| (x.postcode, (*x).to_owned())).collect())
+    if let Ok(service_provider) = res {
+        Ok(service_provider
+            .iter()
+            .map(|x| (x.postcode, (*x).to_owned()))
+            .collect())
     } else if let Err(e) = res {
         Err(format!("{e}").to_string())
     } else {
@@ -107,8 +112,11 @@ pub fn postcode_from_file() -> Result<HashMap<u32, Postcode>, String> {
 pub fn quality_from_file() -> Result<HashMap<u32, QualityFactor>, String> {
     let res = serde_json::from_str::<Vec<QualityFactor>>(INITIAL_QUALITY_DATA);
 
-    if let Ok(service_provider) = res  {
-        Ok(service_provider.iter().map(|x| (x.profile_id, (*x).to_owned())).collect())
+    if let Ok(service_provider) = res {
+        Ok(service_provider
+            .iter()
+            .map(|x| (x.profile_id, (*x).to_owned()))
+            .collect())
     } else if let Err(e) = res {
         Err(format!("{e}").to_string())
     } else {
@@ -119,9 +127,14 @@ pub fn quality_from_file() -> Result<HashMap<u32, QualityFactor>, String> {
 pub fn provider_from_file() -> Result<HashMap<u32, ServiceProvider>, String> {
     let res = serde_json::from_str::<Vec<ServiceProvider>>(INITIAL_SERVICE_PROVIDER_DATA);
 
-    if let Ok(service_providers) = serde_json::from_str::<Vec<ServiceProvider>>(INITIAL_SERVICE_PROVIDER_DATA) {
-        Ok(service_providers.iter().map(|x| (x.id, (*x).to_owned())).collect())
-    } else if let Err(e) = res  {
+    if let Ok(service_providers) =
+        serde_json::from_str::<Vec<ServiceProvider>>(INITIAL_SERVICE_PROVIDER_DATA)
+    {
+        Ok(service_providers
+            .iter()
+            .map(|x| (x.id, (*x).to_owned()))
+            .collect())
+    } else if let Err(e) = res {
         Err(format!("{e}").to_string())
     } else {
         Err("Failed to load service providers. Unknown error.".to_string())
@@ -155,7 +168,9 @@ where
         "group_a" => Ok(PostcodeGroup::GroupA),
         "group_b" => Ok(PostcodeGroup::GroupB),
         "group_c" => Ok(PostcodeGroup::GroupC),
-        _ => Err(serde::de::Error::custom("Invalid postcode extension distance group."))
+        _ => Err(serde::de::Error::custom(
+            "Invalid postcode extension distance group.",
+        )),
     }
 }
 
@@ -175,4 +190,3 @@ where
 }
 
 //-------------------------------------------
-
