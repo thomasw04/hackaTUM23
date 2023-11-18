@@ -7,6 +7,8 @@
       <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"></l-tile-layer>
 
       <l-circle :lat-lng="[48.1380244, 11.5835979]" :radius="500" color="rgba(255,0,0,0.3)" />
+
+      <!-- <l-circle-marker :lat-lng="[41.89026, 12.49238]" :radius="0.01" /> -->
     </l-map>
   </div>
 </template>

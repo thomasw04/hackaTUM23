@@ -13,13 +13,7 @@ import Map from './components/Map.vue'
     <div class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item" href="/songs">
-          <span class="bd-emoji">🎵</span> &nbsp;Songs
-        </a>
-        <a class="navbar-item" href="/artists">
-          <span class="bd-emoji">🎙️</span> &nbsp;Artists
-        </a>
-        <a class="navbar-item" href="/years">
-          <span class="bd-emoji">📅</span> &nbsp;Years
+          <span class="bd-emoji">ඞ</span> &nbsp;Amongs
         </a>
       </div>
 
@@ -29,7 +23,7 @@ import Map from './components/Map.vue'
     </div>
   </nav>
 
-  <Map />
+  <router-view></router-view>
 </template>
 
 <style>
