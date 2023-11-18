@@ -6,14 +6,17 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/craft*': {
-        target: 'http://backend:8000',
+      // Proxy all routes starting with /craft to localhost:8000
+      '/craft': {
+        target: "http://127.0.0.1:8000",
+        secure: false,
         changeOrigin: true,
       },
-      '/zipcode*': {
-        target: 'http://backend:8000',
+      '/zipcode': {
+        target: "http://127.0.0.1:8000",
+        secure: false,
         changeOrigin: true,
-      },
+      }
     },
   },
 })

@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   frontend:
+    image: hackatum-2023-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -11,6 +12,7 @@ services:
       - backend
 
   backend:
+    image: hackatum-2023-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
