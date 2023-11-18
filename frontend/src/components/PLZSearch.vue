@@ -1,12 +1,5 @@
 <template>
   <div class="search-page">
-    <div>
-      <progress v-if="isLoadingResults" class="progress is-large"></progress>
-      <p v-if="results.length > 0">
-        Showing {{ results.length }} results for <b>{{ queryPLZ }}</b>
-      </p>
-    </div>
-
     <article class="message is-danger" v-if="results.length <= 0 && !isLoadingResults">
       <div class="message-header">
         <p>No results</p>
@@ -16,6 +9,19 @@
         <a class="has-text-weight-bold" href="/">home page</a> and try again.
       </div>
     </article>
+
+    <ServiceProviderMap :service-providers="results" style="position: relative; min-height: 50vh" :search-p-l-z-coords="[48.249, 11.651]" />
+
+    <div class="mt-2">
+      <button class="button is-primary is-fullwidth" @click="loadResults" :disabled="isLoadingResults || !haveMoreResults" :class="{ 'is-loading': isLoadingResults }">Load more</button>
+    </div>
+
+    <div class="mt-2">
+      <progress v-if="isLoadingResults" class="progress is-large"></progress>
+      <p v-if="results.length > 0">
+        Showing {{ results.length }} out of {{ totalCount }} results for <b>{{ queryPLZ }}</b>
+      </p>
+    </div>
 
     <div class="card" style="margin: 1em 0; padding: 0" v-for="provider in results" :key="provider.id">
       <header class="card-header">
@@ -28,13 +34,11 @@
       </header>
       <div class="card-content">
         <div class="content">
-          <b>{{ provider.city }}</b
-          >, {{ provider.street }} {{ provider.house_number }}
+          <b>{{ provider.city }}</b>, {{ provider.street }} {{ provider.house_number }}
           <br />
-          <i
-            >{{ provider.first_name }} is ready to drive up to
-            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i
-          >
+          <br />
+          <i>{{ provider.first_name }} is ready to drive up to
+            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i>
           <br />
         </div>
       </div>
@@ -46,8 +50,7 @@
     </div>
 
     <div v-if="haveMoreResults">
-      <button class="button is-primary is-fullwidth" @click="loadResults"
-      :class="{ 'is-loading': isLoadingResults }">Load more</button>
+      <button class="button is-primary is-fullwidth" @click="loadResults" :class="{ 'is-loading': isLoadingResults }">Load more</button>
     </div>
   </div>
 </template>
@@ -55,22 +58,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ServiceProvider } from "../models/results";
-
-var alphonso: ServiceProvider = {
-  id: 64210,
-  first_name: "Alphonso",
-  last_name: "OConner",
-  city: "New Leifburgh",
-  street: "Quitzon Brook",
-  house_number: "3",
-  lon: 9.753894,
-  lat: 48.680219,
-  max_driving_distance: 63000,
-};
+import ServiceProviderMap from "./ServiceProviderMap.vue";
 
 interface ServiceProviderResponse {
   results: Array<ServiceProvider>;
-  haveMoreResults: boolean;
+  has_more: boolean;
+  total_count: number
 }
 
 
@@ -83,7 +76,11 @@ export default defineComponent({
       isLoadingResults: false,
 
       haveMoreResults: false,
+      totalCount: 0,
     };
+  },
+  components: {
+    ServiceProviderMap,
   },
   mounted() {
     // Get query parameter from the router/URL
@@ -92,17 +89,7 @@ export default defineComponent({
   },
   methods: {
     async fetchCraftsmen(page?: number): Promise<ServiceProviderResponse> {
-      return new Promise((resolve, _) => {
-        setTimeout(() => {
-          let data = Array(20).fill(alphonso);
-          resolve({
-            haveMoreResults: page == 0 || Math.random() > 0.8,
-            results: data,
-          });
-        }, Math.random() * 1500);
-      });
-
-      return fetch(`/zipcode/search?q=${this.queryPLZ}&page=${page ?? 0}`).then((response) => response.json());
+      return fetch(`/craftsmen/${this.queryPLZ}/detailed?sort=distance&page=${page ?? 0}`).then((response) => response.json());
     },
     async loadResults() {
       console.log("Loading results for query:", this.queryPLZ);
@@ -117,9 +104,10 @@ export default defineComponent({
         } else {
           this.results = this.results.concat(currentResults.results);
         }
-        this.haveMoreResults = currentResults.haveMoreResults;
+        this.haveMoreResults = currentResults.has_more;
+        this.totalCount = currentResults.total_count;
         if (this.haveMoreResults) {
-            this.page++;
+          this.page++;
         }
       } catch (e: unknown) {
         console.log("Results fetching error:", e);

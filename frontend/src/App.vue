@@ -36,6 +36,7 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+
   a.navbar-item:focus,
   a.navbar-item:focus-within,
   a.navbar-item:hover {
@@ -43,7 +44,7 @@ body {
     color: #aecdff !important;
   }
 
-  p {
+  p:not(.always-light) {
     color: #fff !important;
   }
 }
