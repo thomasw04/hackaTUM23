@@ -12,16 +12,14 @@
         <p>No results</p>
       </div>
       <div class="message-body">
-        No results could be found for your search query.
-        Go back to the <a class="has-text-weight-bold" href="/">home page</a> and try again.
+        No results could be found for your search query. Go back to the
+        <a class="has-text-weight-bold" href="/">home page</a> and try again.
       </div>
     </article>
 
     <div class="card" style="margin: 1em 0; padding: 0" v-for="provider in finalResults" :key="provider.id">
       <header class="card-header">
-        <p class="card-header-title">
-          {{ provider.first_name }} {{ provider.last_name }}
-        </p>
+        <p class="card-header-title">{{ provider.first_name }} {{ provider.last_name }}</p>
         <button class="card-header-icon" aria-label="more options">
           <span class="icon">
             <i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -30,11 +28,14 @@
       </header>
       <div class="card-content">
         <div class="content">
-          <b>{{ provider.city }}</b>,
-          {{ provider.street }} {{ provider.house_number }}
-          <br>
-          <i>{{ provider.first_name }} is ready to drive up to {{Math.floor(provider.max_driving_distance / 1000)}}km</i>
-          <br>
+          <b>{{ provider.city }}</b
+          >, {{ provider.street }} {{ provider.house_number }}
+          <br />
+          <i
+            >{{ provider.first_name }} is ready to drive up to
+            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i
+          >
+          <br />
         </div>
       </div>
       <footer class="card-footer">
@@ -43,39 +44,37 @@
         <a @click.prevent href="#" class="card-footer-item">Remember</a>
       </footer>
     </div>
-
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { ServiceProvider } from '../models/results';
-
+import { defineComponent } from "vue";
+import { ServiceProvider } from "../models/results";
 
 var alphonso: ServiceProvider = {
-  "id": 64210,
-  "first_name": "Alphonso",
-  "last_name": "OConner",
-  "city": "New Leifburgh",
-  "street": "Quitzon Brook",
-  "house_number": "3",
-  "lon": 9.753894,
-  "lat": 48.680219,
-  "max_driving_distance": 63000
-}
+  id: 64210,
+  first_name: "Alphonso",
+  last_name: "OConner",
+  city: "New Leifburgh",
+  street: "Quitzon Brook",
+  house_number: "3",
+  lon: 9.753894,
+  lat: 48.680219,
+  max_driving_distance: 63000,
+};
 
 export default defineComponent({
   data() {
     return {
-      queryPLZ: '',
+      queryPLZ: "",
       finalResults: [] as Array<ServiceProvider>,
       isLoadingFinalResults: false,
     };
   },
   mounted() {
     // Get query parameter from the router/URL
-    this.queryPLZ = this.$route.query.q?.toString() ?? '';
-    this.loadResults()
+    this.queryPLZ = this.$route.query.q?.toString() ?? "";
+    this.loadResults();
   },
   methods: {
     async loadResults() {
@@ -93,17 +92,16 @@ export default defineComponent({
 
       try {
         // TODO: actually fetch craftsmen
-        let response = await fetch(`/zipcode/search?q=${this.queryPLZ}`)
-          .then(response => response.json());
+        let response = await fetch(`/zipcode/search?q=${this.queryPLZ}`).then((response) => response.json());
         // Assuming the response data is an array of ServiceProvider objects
         this.finalResults = response;
         this.$router.push({ query: { q: queryCopy } });
       } catch (e: unknown) {
-        console.log("Final results error:", e)
+        console.log("Final results error:", e);
       } finally {
         this.isLoadingFinalResults = false;
       }
-    }
+    },
   },
 });
 </script>
@@ -129,13 +127,12 @@ export default defineComponent({
 }
 
 #search-suggestions {
-  border: solid 1px #CCC;
+  border: solid 1px #ccc;
   border-top: none;
 }
 
-
 .progress {
-    background-image: linear-gradient(to right, #00d1b2 30%, #ededed 30%) !important;
+  background-image: linear-gradient(to right, #00d1b2 30%, #ededed 30%) !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -145,7 +142,7 @@ export default defineComponent({
   }
 
   .progress {
-      background-image: linear-gradient(to right, #00d1b2 30%, #363636 30%) !important;
+    background-image: linear-gradient(to right, #00d1b2 30%, #363636 30%) !important;
   }
 }
 </style>

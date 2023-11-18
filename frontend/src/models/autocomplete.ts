@@ -1,6 +1,6 @@
 export interface ZipcodeSearchResultItem {
-	zipcode: number;
-	place: string;
-	latitude: number;
-	longitude: number;
+  zipcode: number;
+  place: string;
+  latitude: number;
+  longitude: number;
 }

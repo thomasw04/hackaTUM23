@@ -1,24 +1,41 @@
 <template>
   <div class="search-page">
-
-    <div style="position:relative; height:100%" v-if="previewCoords">
-      <SingleMap style="position:relative; min-height: 50vh;" :coords="previewCoords" />
+    <div style="position: relative; height: 100%" v-if="previewCoords">
+      <SingleMap style="position: relative; min-height: 50vh" :coords="previewCoords" />
     </div>
 
     <div class="field pt-2">
       <form id="search-form" action="/search" @submit.prevent>
-        <div id="search-container" class="control has-icons-left has-icons-right is-large" :class="{ 'is-loading': isLoadingAutocomplete }">
-          <input autofocus id="search-bar" v-model="searchQuery" class="input is-large" type="text" placeholder="Postal code" autocomplete="off" @input="loadAutocomplete" @keydown.down.prevent="handleArrowDown" @keydown.up.prevent="handleArrowUp" @keydown.enter="handleEnter" />
+        <div
+          id="search-container"
+          class="control has-icons-left has-icons-right is-large"
+          :class="{ 'is-loading': isLoadingAutocomplete }"
+        >
+          <input
+            autofocus
+            id="search-bar"
+            v-model="searchQuery"
+            class="input is-large"
+            type="text"
+            placeholder="Postal code"
+            autocomplete="off"
+            @input="loadAutocomplete"
+            @keydown.down.prevent="handleArrowDown"
+            @keydown.up.prevent="handleArrowUp"
+            @keydown.enter="handleEnter"
+          />
           <span class="icon is-small is-left">🔍</span>
-          <span class="icon is-small is-right">{{ }}</span>
+          <span class="icon is-small is-right">{{}}</span>
         </div>
 
         <div id="search-suggestions" v-if="showAutocomplete">
           <ul>
-            <li v-for="(result, index) in autocompleteResults" :key="result.zipcode" :class="{ 'is-active': index === activeAutocompleteIndex }">
-              <a class="navbar-item" @click="selectZipcode(index)">
-                {{ result.zipcode }} {{ result.place }}
-              </a>
+            <li
+              v-for="(result, index) in autocompleteResults"
+              :key="result.zipcode"
+              :class="{ 'is-active': index === activeAutocompleteIndex }"
+            >
+              <a class="navbar-item" @click="selectZipcode(index)"> {{ result.zipcode }} {{ result.place }} </a>
             </li>
           </ul>
         </div>
@@ -32,14 +49,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import SingleMap from './SingleMap.vue';
-import { ZipcodeSearchResultItem } from '../models/autocomplete.ts';
+import { defineComponent } from "vue";
+import SingleMap from "./SingleMap.vue";
+import { ZipcodeSearchResultItem } from "../models/autocomplete.ts";
 
 export default defineComponent({
   data() {
     return {
-      searchQuery: '85748', // just a default value
+      searchQuery: "85748", // just a default value
       autocompleteResults: [] as Array<ZipcodeSearchResultItem>,
       activeAutocompleteIndex: -1,
       isLoadingAutocomplete: false,
@@ -56,13 +73,12 @@ export default defineComponent({
       this.showAutocomplete = true;
 
       try {
-        let response = await fetch(`/zipcode/search?q=${this.searchQuery}`)
-          .then(response => response.json());
+        let response = await fetch(`/zipcode/search?q=${this.searchQuery}`).then((response) => response.json());
         // Assuming the response data is an array of Craftsman objects
         this.autocompleteResults = response;
         this.activeAutocompleteIndex = -1;
       } catch (e: unknown) {
-        console.log("Autocomplete error:", e)
+        console.log("Autocomplete error:", e);
       } finally {
         this.isLoadingAutocomplete = false;
       }
@@ -88,7 +104,10 @@ export default defineComponent({
       this.setPreviewCoords();
     },
     handleEnter(force_router: boolean) {
-      let zipCode = this.activeAutocompleteIndex >= 0 ? this.autocompleteResults[this.activeAutocompleteIndex].zipcode : parseInt(this.searchQuery);
+      let zipCode =
+        this.activeAutocompleteIndex >= 0
+          ? this.autocompleteResults[this.activeAutocompleteIndex].zipcode
+          : parseInt(this.searchQuery);
       if (isNaN(zipCode)) {
         return;
       }
@@ -102,10 +121,8 @@ export default defineComponent({
     },
     setPreviewCoords(index?: number) {
       let item = this.autocompleteResults[index ?? this.activeAutocompleteIndex];
-      this.previewCoords = [
-        item.latitude, item.longitude
-      ]
-    }
+      this.previewCoords = [item.latitude, item.longitude];
+    },
   },
 });
 </script>
@@ -131,7 +148,7 @@ export default defineComponent({
 }
 
 #search-suggestions {
-  border: solid 1px #CCC;
+  border: solid 1px #ccc;
   border-top: none;
 }
 

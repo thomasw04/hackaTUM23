@@ -115,7 +115,6 @@ iframe[name="google_conversion_frame"] {
   }
 }
 .c24m-container {
-
   border: 1px solid #dcdcdc;
   padding: 16px 10px;
 }
@@ -131,7 +130,6 @@ iframe[name="google_conversion_frame"] {
 }
 #c24m-page-blocking-layer,
 #c24m-page-strict-blocking-layer {
-
   position: fixed;
   top: 0;
   bottom: 0;
@@ -288,7 +286,6 @@ select {
   font-weight: 700;
 }
 .c24-contact-layer-home .c24m-contact-slogan-evo {
-
   text-align: left;
   min-height: initial;
   padding: 10px 0 0;
@@ -635,20 +632,14 @@ a.c24m-cookie-consent-button-secondary {
   -moz-border-radius: 5px;
   border-radius: 5px;
 }
-.c24m-cookie-consent-screen-list-entry-header
-  input[type="checkbox"]:checked
-  + span:before {
-  background: #fff
-    url(https://www.check24.de/assets/images/web/svg/haken-darkblue.svg)
-    no-repeat center;
+.c24m-cookie-consent-screen-list-entry-header input[type="checkbox"]:checked + span:before {
+  background: #fff url(https://www.check24.de/assets/images/web/svg/haken-darkblue.svg) no-repeat center;
   background-size: contain;
   border: 1px solid #999;
   width: 18px;
   height: 18px;
 }
-.c24m-cookie-consent-screen-list-entry-header
-  input[type="checkbox"][disabled]:checked
-  + span:before {
+.c24m-cookie-consent-screen-list-entry-header input[type="checkbox"][disabled]:checked + span:before {
   background-color: #b4b4b4;
   border: 1px solid #999;
 }
@@ -688,9 +679,7 @@ a.c24m-cookie-consent-button-secondary {
 .c24m-cookie-consent-screen-list-m-entry {
   margin-bottom: 15px;
 }
-.c24m-cookie-consent-screen-list-m-entry
-  .c24m-cookie-consent-screen-list-entry-header
-  > div:nth-child(2) {
+.c24m-cookie-consent-screen-list-m-entry .c24m-cookie-consent-screen-list-entry-header > div:nth-child(2) {
   line-height: 19px;
   font-size: 12px;
 }
@@ -708,7 +697,6 @@ a.c24m-cookie-consent-button-secondary {
   position: absolute;
   left: 0;
   top: -47px;
-
 }
 .c24m-page.c24m-smb .c24m-cookie {
   top: -103px;
@@ -717,9 +705,15 @@ a.c24m-cookie-consent-button-secondary {
   visibility: hidden;
 }
 .c24m-page.c24m-cookie-transition {
-  -webkit-transition: visibility 0s, top 300ms linear;
-  -o-transition: visibility 0s, top 300ms linear;
-  transition: visibility 0s, top 300ms linear;
+  -webkit-transition:
+    visibility 0s,
+    top 300ms linear;
+  -o-transition:
+    visibility 0s,
+    top 300ms linear;
+  transition:
+    visibility 0s,
+    top 300ms linear;
 }
 .c24m-page.c24m-cookie-animate {
   top: 47px;
@@ -953,12 +947,10 @@ header {
   position: relative;
   width: 100%;
   min-height: 40px;
-
 }
 .c24m-header-content {
   padding: 0 10px;
   position: relative;
-
 }
 #c24m-header-top {
   height: 42px;
@@ -1054,7 +1046,6 @@ header {
   font-weight: 700;
 }
 .c24m-contact-layer-chatbot .c24m-contact-text-wrapper {
-
   border-radius: 17px;
   padding: 40px 20px 14px;
   font-size: 14px;
@@ -1080,9 +1071,7 @@ header {
   text-align: right;
   margin-top: 5px;
 }
-.c24m-contact-layer-chatbot
-  .c24m-contact-text-wrapper:hover
-  .c24m-chatbot-open {
+.c24m-contact-layer-chatbot .c24m-contact-text-wrapper:hover .c24m-chatbot-open {
   color: #c05702;
 }
 .c24m-contact-layer-chatbot a.c24m-contact-layer-link,
@@ -1210,7 +1199,6 @@ header {
 .c24m-navi .c24m-navi-header-bottom {
   width: 100%;
   position: relative;
-
 }
 .c24m-navi .c24m-navi-header-bottom span,
 .c24m-navi .c24m-navi-header-bottom a {
@@ -1251,10 +1239,8 @@ header {
   width: 100%;
   padding: 0;
   margin-top: 10px;
-
 }
 .c24m-navi .c24m-navi-section.c24m-navi-section-logout {
-
 }
 .c24m-navi .c24m-navi-section.c24m-navi-section-top {
   margin-top: 0;
@@ -1291,13 +1277,7 @@ header {
   width: 26px;
   margin-top: 8px;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a.c24m-kb-logout-navi
-  span.c24m-navi-svg
-  svg {
+.c24m-navi .c24m-navi-section ul li a.c24m-kb-logout-navi span.c24m-navi-svg svg {
   fill: #005ea8;
 }
 .c24m-navi .c24m-navi-section ul li a span.c24m-navi-element {
@@ -1308,23 +1288,13 @@ header {
   border-bottom: 1px solid #dcdcdc;
   position: relative;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a.c24m-kb-logout-navi
-  span.c24m-navi-element {
+.c24m-navi .c24m-navi-section ul li a.c24m-kb-logout-navi span.c24m-navi-element {
   color: #005ea8;
 }
 .c24m-navi .c24m-navi-section ul li:last-child a span.c24m-navi-element {
   border-bottom: 0;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a
-  span.c24m-navi-element.c24m-navi-element-plain {
+.c24m-navi .c24m-navi-section ul li a span.c24m-navi-element.c24m-navi-element-plain {
   margin-left: 38px;
 }
 .c24m-navi .c24m-navi-section ul li a span.c24m-navi-element-count {
@@ -1349,7 +1319,6 @@ header {
   left: -100%;
 }
 #c24m-nav-slide .c24m-nav-comparisons {
-
   position: absolute;
   top: 0;
   left: 100%;
@@ -1365,7 +1334,6 @@ header {
   overflow-x: visible;
 }
 #c24m-nav-slide .c24m-nav-comparisons .c24m-nav-comp-back {
-
   font-size: 16px;
   line-height: 18px;
   padding: 13px 0 13px 35px;
@@ -1377,27 +1345,20 @@ header {
   margin: 0;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li {
-
   font-size: 16px;
   line-height: 20px;
   color: #333;
   display: block;
   position: relative;
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  span:not(.c24-nav-ele-new-wrapper):not(.c24-nav-ele-new) {
+#c24m-nav-slide .c24m-nav-comparisons ul li span:not(.c24-nav-ele-new-wrapper):not(.c24-nav-ele-new) {
   display: block;
   padding: 18px 10px 12px 10px;
-
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li span a {
   color: #333;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li ul li {
-
   padding-left: 10px;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li ul.c24m-nav-comp-item-sub li {
@@ -1427,12 +1388,7 @@ header {
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li ul li a:before,
 #c24m-nav-slide .c24m-nav-comparisons .c24m-nav-comp-back:before,
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a
-  span.c24m-navi-element:not(.c24m-navi-logout):before,
+.c24m-navi .c24m-navi-section ul li a span.c24m-navi-element:not(.c24m-navi-logout):before,
 .c24m-navi .c24m-navi-header-bottom :not(#c24m-kb-login-navi) span:before,
 .c24m-navi .c24m-navi-header-bottom a:before {
   content: "";
@@ -1450,35 +1406,13 @@ header {
   left: 15px;
   transform: rotate(180deg);
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  ul:not(.c24m-nav-comp-item-sub)
-  li:last-child
-  a {
+#c24m-nav-slide .c24m-nav-comparisons ul li ul:not(.c24m-nav-comp-item-sub) li:last-child a {
   border-bottom: 0;
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  ul.c24m-nav-comp-item-sub
-  li
-  ul
-  li:last-child
-  a {
+#c24m-nav-slide .c24m-nav-comparisons ul li ul.c24m-nav-comp-item-sub li ul li:last-child a {
   border-bottom: 1px solid #dcdcdc;
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  ul.c24m-nav-comp-item-sub
-  li:last-child
-  ul
-  li:last-child
-  a {
+#c24m-nav-slide .c24m-nav-comparisons ul li ul.c24m-nav-comp-item-sub li:last-child ul li:last-child a {
   border-bottom: 0;
 }
 #c24m-nav-slide .c24m-nav-comparisons .c24m-nav-comp-subject {
@@ -1489,12 +1423,7 @@ header {
   padding-bottom: 5px;
   border-bottom: 1px solid #dcdcdc;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a.c24m-kb-logout-navi
-  span.c24m-navi-logout {
+.c24m-navi .c24m-navi-section ul li a.c24m-kb-logout-navi span.c24m-navi-logout {
   border: 0;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li span.c24m-nav-subline-gold {
@@ -1811,8 +1740,7 @@ header {
 .hits-takeover-arrow {
   height: 14px;
   width: 14px;
-  background: url(https://search.check24.de/suche/img/takeover-arrow.svg)
-    no-repeat center center;
+  background: url(https://search.check24.de/suche/img/takeover-arrow.svg) no-repeat center center;
   -webkit-background-size: 14px 14px;
   background-size: 14px 14px;
   position: absolute;
@@ -1838,7 +1766,6 @@ header {
   min-height: 56px;
 }
 .c24m-sab.c24m-sab-v2 {
-
   min-height: 80px;
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
@@ -1846,7 +1773,6 @@ header {
   z-index: 101;
 }
 .c24m-sab.c24m-sab-rsn {
-
 }
 .c24m-sab.c24m-sab-hide {
   display: none;
@@ -2014,7 +1940,6 @@ header {
   min-height: 56px;
 }
 .c24m-sab.c24m-sab-v2 {
-
   min-height: 80px;
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
@@ -2022,7 +1947,6 @@ header {
   z-index: 101;
 }
 .c24m-sab.c24m-sab-rsn {
-
 }
 .c24m-sab.c24m-sab-hide {
   display: none;
@@ -2202,7 +2126,6 @@ header {
   user-select: none;
   -o-user-select: none;
   z-index: 20002;
-
 }
 .c24-uli-loginlayer-close {
   width: 11px;
