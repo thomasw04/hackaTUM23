@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use rstar::{Envelope, Point, PointDistance, RTree, RTreeObject, AABB};
+use rstar::{Envelope, Point, PointDistance, RTree, RTreeObject, SelectionFunction, AABB};
 use serde::Serialize;
 
 use crate::data::{Postcode, PostcodeGroup, QualityFactor, ServiceProvider, ServiceProviderView};
@@ -76,6 +76,30 @@ impl PointDistance for InServiceProvider {
         } else {
             None
         }
+    }
+}
+
+pub struct SelectWithId {
+    id: u32,
+    pos: (f64, f64),
+}
+
+impl SelectWithId {
+    pub fn new(id: u32, pos: (f64, f64)) -> Self {
+        SelectWithId { id, pos }
+    }
+}
+
+impl SelectionFunction<InServiceProvider> for SelectWithId {
+    fn should_unpack_parent(
+        &self,
+        parent_envelope: &<InServiceProvider as RTreeObject>::Envelope,
+    ) -> bool {
+        parent_envelope.contains_point(&[self.pos.0, self.pos.1])
+    }
+
+    fn should_unpack_leaf(&self, leaf: &InServiceProvider) -> bool {
+        leaf.id == self.id
     }
 }
 
@@ -159,6 +183,67 @@ impl Map {
         };
 
         distance_weight * distance_score + (1.0 - distance_weight) * quality_factor
+    }
+
+    fn drain_value(&mut self, id: u32) -> InServiceProvider {
+        let lat = self.service_providers[&id].lat;
+        let lon = self.service_providers[&id].lon;
+
+        self.b_tree
+            .drain_with_selection_function(SelectWithId::new(id, (lon, lat)));
+
+        self.c_tree
+            .drain_with_selection_function(SelectWithId::new(id, (lon, lat)));
+
+        self.a_tree
+            .drain_with_selection_function(SelectWithId::new(id, (lon, lat)))
+            .nth(0)
+            .unwrap()
+    }
+
+    pub fn update_service_provider(
+        &mut self,
+        id: u32,
+        driving_distance: Option<u64>,
+        picture_score: Option<f64>,
+        description_score: Option<f64>,
+    ) -> (u64, f64, f64) {
+        if let Some(distance) = driving_distance {
+            let mut old = self.drain_value(id);
+            old.max_driving_distance = distance;
+            self.a_tree.insert(old.clone());
+
+            old.max_driving_distance += 2000;
+            self.b_tree.insert(old.clone());
+
+            old.max_driving_distance += 3000;
+            self.c_tree.insert(old);
+
+            self.service_providers
+                .get_mut(&id)
+                .unwrap()
+                .max_driving_distance = distance;
+        }
+
+        if let Some(score) = picture_score {
+            self.quality_factor
+                .get_mut(&id)
+                .unwrap()
+                .profile_picture_score = score;
+        }
+
+        if let Some(score) = description_score {
+            self.quality_factor
+                .get_mut(&id)
+                .unwrap()
+                .profile_description_score = score;
+        }
+
+        (
+            self.service_providers[&id].max_driving_distance,
+            self.quality_factor[&id].profile_picture_score,
+            self.quality_factor[&id].profile_description_score,
+        )
     }
 
     pub fn add_service_provider(&mut self, service_provider: &ServiceProvider) {

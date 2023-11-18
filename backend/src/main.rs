@@ -1,8 +1,12 @@
+use std::sync::Mutex;
+
+use actix_web::patch;
 use actix_web::{
     get, post,
     web::{self},
     App, HttpRequest, HttpResponse, HttpServer, Responder, Result,
 };
+
 use data::PostcodeInfo;
 use map::Map;
 use serde::{Deserialize, Serialize};
@@ -12,24 +16,11 @@ use crate::data::ServiceProvider;
 mod data;
 mod map;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
-
 #[derive(Serialize, Deserialize)]
 struct SearchRequest {
     q: String,
 }
+
 #[get("/zipcode/search")]
 async fn zipcode_search(req: HttpRequest, query: web::Query<SearchRequest>) -> impl Responder {
     let postcode_engine: &SimSearch<PostcodeInfo> = req
@@ -56,6 +47,59 @@ async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<i
             "[]".to_string()
         },
     ))
+}
+
+#[derive(Deserialize)]
+struct UpdateRequest {
+    max_driving_distance: Option<u64>,
+    profile_picture_score: Option<f64>,
+    profile_description_score: Option<f64>,
+}
+
+#[derive(Serialize)]
+struct UpdateResponse {
+    id: u32,
+    updated: UpdatedFields,
+}
+
+#[derive(Serialize)]
+struct UpdatedFields {
+    maxDrivingDistance: u64,
+    profilePictureScore: f64,
+    profileDescriptionScore: f64,
+}
+
+#[patch("/craftman/{craftman_id}")]
+async fn craftsmen_update(
+    req: HttpRequest,
+    info: web::Json<UpdateRequest>,
+    path: web::Path<String>,
+) -> Result<impl Responder> {
+    let craftmen_id = path.into_inner().parse().unwrap();
+    let map: &Mutex<Map> = req.app_data().unwrap();
+    let mut map = map.lock().unwrap();
+
+    let (maxDrivingDistance, profilePictureScore, profileDescriptionScore) = map
+        .update_service_provider(
+            craftmen_id,
+            info.max_driving_distance,
+            info.profile_picture_score,
+            info.profile_description_score,
+        );
+
+    let updated_fields = UpdatedFields {
+        maxDrivingDistance,
+        profilePictureScore,
+        profileDescriptionScore,
+    };
+
+    let response = UpdateResponse {
+        id: craftmen_id,
+        updated: updated_fields,
+    };
+
+    // Return the PatchResponse in the HTTP response
+    Ok(HttpResponse::Ok().json(response))
 }
 
 #[derive(Serialize, Deserialize)]
@@ -142,14 +186,11 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .service(hello)
-            .service(echo)
             .app_data(postcode_engine.clone())
             .app_data(map.clone())
             .service(zipcode_search)
             .service(craftsmen_search)
             .service(craftsmen_search_detailed)
-            .route("/hey", web::get().to(manual_hello))
     })
     .bind(("0.0.0.0", 8000))?
     .run()
