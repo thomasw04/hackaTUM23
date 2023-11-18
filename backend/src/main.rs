@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use actix_web::{
     get, post,
     web::{self},
@@ -29,11 +27,11 @@ async fn manual_hello() -> impl Responder {
 }
 
 #[derive(Serialize, Deserialize)]
-struct searchRequest {
+struct SearchRequest {
     q: String,
 }
 #[get("/zipcode/search")]
-async fn zipcode_search(req: HttpRequest, query: web::Query<searchRequest>) -> impl Responder {
+async fn zipcode_search(req: HttpRequest, query: web::Query<SearchRequest>) -> impl Responder {
     let postcode_engine: &SimSearch<PostcodeInfo> = req
         .app_data()
         .expect("Postcode engine not found in app data.");
@@ -61,13 +59,13 @@ async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<i
 }
 
 #[derive(Serialize, Deserialize)]
-struct detailedRequest {
+struct DetailedRequest {
     page: Option<u32>,
     sort: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
-struct detailedResponse {
+struct DetailedResponse {
     has_more: bool,
     total_count: usize,
     results: Vec<ServiceProvider>,
@@ -77,7 +75,7 @@ struct detailedResponse {
 async fn craftsmen_search_detailed(
     req: HttpRequest,
     path: web::Path<String>,
-    query: web::Query<detailedRequest>,
+    query: web::Query<DetailedRequest>,
 ) -> Result<impl Responder> {
     let postalcode = path.into_inner();
     let map: &Map = req.app_data().expect("Map not found!");
@@ -109,7 +107,7 @@ async fn craftsmen_search_detailed(
         .collect();
 
     Ok(HttpResponse::Ok().content_type("application/json").body(
-        serde_json::to_string(&detailedResponse {
+        serde_json::to_string(&DetailedResponse {
             has_more,
             total_count: total_count,
             results: detailed,

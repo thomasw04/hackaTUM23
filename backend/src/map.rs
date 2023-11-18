@@ -233,24 +233,22 @@ impl Map {
     }
 
     pub fn ranked_by_profile(&self, postcode: u32) -> Option<Vec<ServiceProviderView>> {
-        if let Some(code) = self.postcodes.get(&postcode) {
-            if let Some(in_range) = self.get_service_providers(postcode) {
-                let mut ranked: Vec<ServiceProviderView> = in_range
-                    .into_iter()
-                    .map(|x| {
-                        let quality = self.quality_factor.get(&x.id).unwrap();
-                        ServiceProviderView {
-                            id: x.id,
-                            rankingScore: 0.4 * quality.profile_description_score
-                                + 0.6 * quality.profile_picture_score,
-                            name: x.name,
-                        }
-                    })
-                    .collect();
+        if let Some(in_range) = self.get_service_providers(postcode) {
+            let mut ranked: Vec<ServiceProviderView> = in_range
+                .into_iter()
+                .map(|x| {
+                    let quality = self.quality_factor.get(&x.id).unwrap();
+                    ServiceProviderView {
+                        id: x.id,
+                        rankingScore: 0.4 * quality.profile_description_score
+                            + 0.6 * quality.profile_picture_score,
+                        name: x.name,
+                    }
+                })
+                .collect();
 
-                ranked.sort_by(|a, b| b.rankingScore.total_cmp(&a.rankingScore));
-                return Some(ranked);
-            }
+            ranked.sort_by(|a, b| b.rankingScore.total_cmp(&a.rankingScore));
+            return Some(ranked);
         }
 
         return None;
