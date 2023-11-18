@@ -1,13 +1,13 @@
 <template>
   <div class="search-page">
     <div>
-      <progress v-if="isLoadingFinalResults" class="progress is-large"></progress>
-      <p v-if="finalResults.length > 0">
-        Showing {{ finalResults.length }} results for <b>{{ queryPLZ }}</b>
+      <progress v-if="isLoadingResults" class="progress is-large"></progress>
+      <p v-if="results.length > 0">
+        Showing {{ results.length }} results for <b>{{ queryPLZ }}</b>
       </p>
     </div>
 
-    <article class="message is-danger" v-if="finalResults.length <= 0 && !isLoadingFinalResults">
+    <article class="message is-danger" v-if="results.length <= 0 && !isLoadingResults">
       <div class="message-header">
         <p>No results</p>
       </div>
@@ -17,7 +17,7 @@
       </div>
     </article>
 
-    <div class="card" style="margin: 1em 0; padding: 0" v-for="provider in finalResults" :key="provider.id">
+    <div class="card" style="margin: 1em 0; padding: 0" v-for="provider in results" :key="provider.id">
       <header class="card-header">
         <p class="card-header-title">{{ provider.first_name }} {{ provider.last_name }}</p>
         <button class="card-header-icon" aria-label="more options">
@@ -44,6 +44,11 @@
         <a @click.prevent href="#" class="card-footer-item">Remember</a>
       </footer>
     </div>
+
+    <div v-if="haveMoreResults">
+      <button class="button is-primary is-fullwidth" @click="loadResults"
+      :class="{ 'is-loading': isLoadingResults }">Load more</button>
+    </div>
   </div>
 </template>
 
@@ -63,12 +68,21 @@ var alphonso: ServiceProvider = {
   max_driving_distance: 63000,
 };
 
+interface ServiceProviderResponse {
+  results: Array<ServiceProvider>;
+  haveMoreResults: boolean;
+}
+
+
 export default defineComponent({
   data() {
     return {
+      page: 0,
       queryPLZ: "",
-      finalResults: [] as Array<ServiceProvider>,
-      isLoadingFinalResults: false,
+      results: [] as Array<ServiceProvider>,
+      isLoadingResults: false,
+
+      haveMoreResults: false,
     };
   },
   mounted() {
@@ -77,29 +91,40 @@ export default defineComponent({
     this.loadResults();
   },
   methods: {
+    async fetchCraftsmen(page?: number): Promise<ServiceProviderResponse> {
+      return new Promise((resolve, _) => {
+        setTimeout(() => {
+          let data = Array(20).fill(alphonso);
+          resolve({
+            haveMoreResults: page == 0 || Math.random() > 0.8,
+            results: data,
+          });
+        }, Math.random() * 1500);
+      });
+
+      return fetch(`/zipcode/search?q=${this.queryPLZ}&page=${page ?? 0}`).then((response) => response.json());
+    },
     async loadResults() {
       console.log("Loading results for query:", this.queryPLZ);
       let queryCopy = this.queryPLZ;
-      this.isLoadingFinalResults = true;
-
-      setTimeout(() => {
-        this.finalResults = Array(Math.floor(Math.random() * 15)).fill(alphonso);
-        this.isLoadingFinalResults = false;
-        this.$router.push({ query: { q: queryCopy } });
-      }, Math.random() * 1250);
-
-      return;
+      this.isLoadingResults = true;
 
       try {
-        // TODO: actually fetch craftsmen
-        let response = await fetch(`/zipcode/search?q=${this.queryPLZ}`).then((response) => response.json());
-        // Assuming the response data is an array of ServiceProvider objects
-        this.finalResults = response;
-        this.$router.push({ query: { q: queryCopy } });
+        let currentResults = await this.fetchCraftsmen(this.page);
+        if (this.page === 0) {
+          this.results = currentResults.results;
+          this.$router.push({ query: { q: queryCopy } });
+        } else {
+          this.results = this.results.concat(currentResults.results);
+        }
+        this.haveMoreResults = currentResults.haveMoreResults;
+        if (this.haveMoreResults) {
+            this.page++;
+        }
       } catch (e: unknown) {
-        console.log("Final results error:", e);
+        console.log("Results fetching error:", e);
       } finally {
-        this.isLoadingFinalResults = false;
+        this.isLoadingResults = false;
       }
     },
   },
