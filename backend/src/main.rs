@@ -1,5 +1,5 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-mod postcode;
+mod data;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -17,7 +17,7 @@ async fn manual_hello() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let postcode_info = postcode::postcodes_from_file("data/zipcodes.de.json").expect(
+    let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json").expect(
         "Could not read postcode data from file."
     );
 
