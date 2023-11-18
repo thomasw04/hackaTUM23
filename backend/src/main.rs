@@ -9,6 +9,8 @@ use data::PostcodeInfo;
 use map::Map;
 use serde::{Deserialize, Serialize};
 use simsearch::SimSearch;
+
+use crate::data::ServiceProvider;
 mod data;
 mod map;
 
@@ -58,6 +60,60 @@ async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<i
     ))
 }
 
+#[derive(Serialize, Deserialize)]
+struct detailedRequest {
+    page: Option<u32>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct detailedResponse {
+    has_more: bool,
+    total_count: usize,
+    results: Vec<ServiceProvider>,
+}
+
+#[get("/craftsmen/{postalcode}/detailed")]
+async fn craftsmen_search_detailed(
+    req: HttpRequest,
+    path: web::Path<String>,
+    query: web::Query<detailedRequest>,
+) -> Result<impl Responder> {
+    let postalcode = path.into_inner();
+    let map: &Map = req.app_data().expect("Map not found!");
+
+    let Some(mut service_providers) = map.get_service_providers(postalcode.parse().unwrap()) else {
+        return Ok(HttpResponse::Ok()
+            .content_type("application/json")
+            .body("[]".to_string()));
+    };
+
+    let total_count = service_providers.len();
+
+    const PAGE_SIZE: u32 = 20;
+    let start = query.page.unwrap_or(0) * PAGE_SIZE;
+
+    service_providers = service_providers.split_off(start as usize);
+    let has_more = service_providers.len() > PAGE_SIZE as usize;
+    service_providers.truncate(PAGE_SIZE as usize);
+
+    let detailed: Vec<ServiceProvider> = service_providers
+        .iter()
+        .map(|sp| map.service_provider_by_id(sp.id))
+        .filter(|sp| sp.is_some())
+        .map(|sp| sp.unwrap())
+        .collect();
+
+    Ok(HttpResponse::Ok()
+        .content_type("application/json")
+        .body(serde_json::to_string(
+            &detailedResponse {
+                has_more,
+                total_count: total_count,
+                results: detailed,
+            }
+        ).unwrap()))
+}
+
 pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
     let mut engine: SimSearch<PostcodeInfo> = SimSearch::new();
 
@@ -90,6 +146,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(map.clone())
             .service(zipcode_search)
             .service(craftsmen_search)
+            .service(craftsmen_search_detailed)
             .route("/hey", web::get().to(manual_hello))
     })
     .bind(("0.0.0.0", 8000))?

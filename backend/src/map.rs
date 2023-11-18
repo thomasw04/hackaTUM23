@@ -167,6 +167,10 @@ impl Map {
         self.c_tree.insert(tmp.into());
     }
 
+    pub fn service_provider_by_id(&self, id: u32) -> Option<ServiceProvider> {
+        self.service_providers.get(&id).cloned()
+    }
+
     pub fn get_service_providers(&self, postcode: u32) -> Option<Vec<ServiceProviderView>> {
         if let Some(code) = self.postcodes.get(&postcode) {
             let tree = match code.postcode_extension_distance_group {
