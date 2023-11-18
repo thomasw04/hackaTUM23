@@ -1,6 +1,7 @@
-use std::sync::Mutex;
+use std::sync::RwLock;
 
 use actix_web::patch;
+use actix_web::web::Data;
 use actix_web::{
     get,
     web::{self},
@@ -37,9 +38,12 @@ async fn zipcode_search(req: HttpRequest, query: web::Query<SearchRequest>) -> i
 }
 
 #[get("/craftsmen/{postalcode}")]
-async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<impl Responder> {
+async fn craftsmen_search(
+    path: web::Path<String>,
+    data: Data<RwLock<Map>>,
+) -> Result<impl Responder> {
     let postalcode = path.into_inner();
-    let map: &Map = req.app_data().expect("Map not found!");
+    let map = data.read().unwrap();
 
     Ok(HttpResponse::Ok().content_type("application/json").body(
         if let Some(service_providers) = map.ranked_by_score(postalcode.parse().unwrap()) {
@@ -72,13 +76,12 @@ struct UpdatedFields {
 
 #[patch("/craftman/{craftman_id}")]
 async fn craftsmen_update(
-    req: HttpRequest,
     info: web::Json<UpdateRequest>,
     path: web::Path<String>,
+    data: Data<RwLock<Map>>,
 ) -> Result<impl Responder> {
     let craftmen_id = path.into_inner().parse().unwrap();
-    let map: &Mutex<Map> = req.app_data().unwrap();
-    let mut map = map.lock().unwrap();
+    let mut map = data.write().unwrap();
 
     let (maxDrivingDistance, profilePictureScore, profileDescriptionScore) = map
         .update_service_provider(
@@ -118,12 +121,12 @@ struct DetailedResponse {
 
 #[get("/craftsmen/{postalcode}/detailed")]
 async fn craftsmen_search_detailed(
-    req: HttpRequest,
     path: web::Path<String>,
     query: web::Query<DetailedRequest>,
+    data: Data<RwLock<Map>>,
 ) -> Result<impl Responder> {
     let postalcode = path.into_inner();
-    let map: &Map = req.app_data().expect("Map not found!");
+    let map = data.read().unwrap();
 
     let Some(mut service_providers) = (match query.sort.as_deref() {
         Some("distance") => map.ranked_by_distance(postalcode.parse().unwrap()),
@@ -183,14 +186,18 @@ async fn main() -> std::io::Result<()> {
     let service_providers = data::provider_from_file().unwrap();
     let quality_factor = data::quality_from_file().unwrap();
 
-    let map = Map::new(postcodes, quality_factor, service_providers);
+    let map = Data::new(RwLock::new(Map::new(
+        postcodes,
+        quality_factor,
+        service_providers,
+    )));
 
     let postcode_engine = build_engine(&postcode_info);
 
     HttpServer::new(move || {
         App::new()
             .app_data(postcode_engine.clone())
-            .app_data(map.clone())
+            .app_data(Data::clone(&map))
             .service(zipcode_search)
             .service(craftsmen_search)
             .service(craftsmen_search_detailed)
