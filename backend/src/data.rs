@@ -1,4 +1,4 @@
-use std::{fs, collections::{HashMap, HashSet}};
+use std::{fs, collections::HashMap};
 use serde_json;
 use std::error::Error;
 
@@ -34,6 +34,13 @@ where
 {
     let s = String::deserialize(deserializer)?;
     f32::from_str(&s).map_err(serde::de::Error::custom)
+}
+
+fn to_radians<'de, D>(deserializer: D) -> Result<f64, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    f64::deserialize(deserializer).map(|x| x.to_radians())
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd)]pub struct PostcodeInfo {
@@ -80,8 +87,13 @@ pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
 pub struct Postcode {
     #[serde(deserialize_with = "from_str_u32")]
     pub postcode: u32,
+
+    #[serde(deserialize_with = "to_radians")]
     pub lon: f64,
+
+    #[serde(deserialize_with = "to_radians")]
     pub lat: f64,
+
     #[serde(deserialize_with = "group_str_to_u8")]
     pub postcode_extension_distance_group: u8,
 }
@@ -93,30 +105,41 @@ pub struct ServiceProvider {
     pub last_name: String,
     pub city: String,
     pub street: String,
-    #[serde(deserialize_with = "from_str_u32")]
-    pub house_number: u32,
+    pub house_number: String,
+
+    #[serde(deserialize_with = "to_radians")]
     pub lon: f64,
+
+    #[serde(deserialize_with = "to_radians")]
     pub lat: f64,
+
     pub max_driving_distance: u64
 }
 
 const INITIAL_POSTCODE_DATA: &'static str = include_str!("../data/postcode.json");
 const INITIAL_SERVICE_PROVIDER_DATA: &'static str = include_str!("../data/service_provider_profile.json");
 
-pub fn postcode_from_file() -> Result<HashMap<u32, Postcode>, &'static str> {
-    serde_json::from_str::<Vec<Postcode>>(INITIAL_POSTCODE_DATA) .unwrap();
-    if let Ok(service_provider) = serde_json::from_str::<Vec<Postcode>>(INITIAL_POSTCODE_DATA)  {
+pub fn postcode_from_file() -> Result<HashMap<u32, Postcode>, String> {
+    let res = serde_json::from_str::<Vec<Postcode>>(INITIAL_POSTCODE_DATA);
+
+    if let Ok(service_provider) = res  {
         Ok(service_provider.iter().map(|x| (x.postcode, (*x).to_owned())).collect())
+    } else if let Err(e) = res {
+        Err(format!("{e}").to_string())
     } else {
-        Err("Failed to load postcode data.")
+        Err("Failed to parse postcode. Unknown error.".to_string())
     }
 }
 
-pub fn provider_from_file() -> Result<HashMap<u32, ServiceProvider>, &'static str> {
+pub fn provider_from_file() -> Result<HashMap<u32, ServiceProvider>, String> {
+    let res = serde_json::from_str::<Vec<ServiceProvider>>(INITIAL_SERVICE_PROVIDER_DATA);
+
     if let Ok(service_providers) = serde_json::from_str::<Vec<ServiceProvider>>(INITIAL_SERVICE_PROVIDER_DATA) {
         Ok(service_providers.iter().map(|x| (x.id, (*x).to_owned())).collect())
+    } else if let Err(e) = res  {
+        Err(format!("{e}").to_string())
     } else {
-        Err("Failed to load service providers.")
+        Err("Failed to load service providers. Unknown error.".to_string())
     }
 }
 

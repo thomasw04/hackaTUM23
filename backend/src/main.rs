@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
     );
 
     let postcodes = data::postcode_from_file().unwrap();
-    let service_providers = data::provider_from_file().unwrap_or(HashMap::new());
+    let service_providers = data::provider_from_file().unwrap();
     let map = Map::new(postcodes, service_providers);
 
     let postcode_engine = data::build_engine(&postcode_info);
