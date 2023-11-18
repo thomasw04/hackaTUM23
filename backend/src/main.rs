@@ -56,9 +56,9 @@ async fn craftsmen_search(
 
 #[derive(Deserialize)]
 struct UpdateRequest {
-    max_driving_distance: Option<u64>,
-    profile_picture_score: Option<f64>,
-    profile_description_score: Option<f64>,
+    maxDrivingDistance: Option<u64>,
+    profilePictureScore: Option<f64>,
+    profileDescriptionScore: Option<f64>,
 }
 
 #[derive(Serialize)]
@@ -86,9 +86,9 @@ async fn craftsmen_update(
     let (maxDrivingDistance, profilePictureScore, profileDescriptionScore) = map
         .update_service_provider(
             craftmen_id,
-            info.max_driving_distance,
-            info.profile_picture_score,
-            info.profile_description_score,
+            info.maxDrivingDistance,
+            info.profilePictureScore,
+            info.profileDescriptionScore,
         );
 
     let updated_fields = UpdatedFields {
