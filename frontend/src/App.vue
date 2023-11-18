@@ -36,7 +36,6 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-
   a.navbar-item:focus,
   a.navbar-item:focus-within,
   a.navbar-item:hover {

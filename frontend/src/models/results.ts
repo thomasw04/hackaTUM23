@@ -11,8 +11,5 @@ export interface ServiceProvider {
 }
 
 export function getNormalCoords(sp: ServiceProvider): [number, number] {
-  return [
-    sp.lat * 180 / Math.PI,
-    sp.lon * 180 / Math.PI
-  ];
+  return [(sp.lat * 180) / Math.PI, (sp.lon * 180) / Math.PI];
 }

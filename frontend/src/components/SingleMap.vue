@@ -20,7 +20,7 @@ export default {
   },
   props: {
     coords: {
-      type: Array,
+      type: Array<number>,
       required: true,
     },
     zoom: {

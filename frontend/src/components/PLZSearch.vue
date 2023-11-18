@@ -10,10 +10,32 @@
       </div>
     </article>
 
-    <ServiceProviderMap :service-providers="results" style="position: relative; min-height: 50vh" :search-p-l-z-coords="[48.249, 11.651]" />
+    <ServiceProviderMap
+      :service-providers="results"
+      style="position: relative; min-height: 50vh"
+      :search-p-l-z-coords="[48.249, 11.651]"
+    />
 
-    <div class="mt-2">
-      <button class="button is-primary is-fullwidth" @click="loadResults" :disabled="isLoadingResults || !haveMoreResults" :class="{ 'is-loading': isLoadingResults }">Load more</button>
+    <div class="mt-2 columns is-2">
+      <div class="column">
+        <div class="select is-fullwidth" @change="setRankType">
+          <select>
+            <option value="rank">Rank</option>
+            <option value="distance">Distance</option>
+            <option value="profile">Profile</option>
+          </select>
+        </div>
+      </div>
+      <div class="column">
+        <button
+          class="button is-primary is-fullwidth"
+          @click="loadResults"
+          :disabled="isLoadingResults || !haveMoreResults"
+          :class="{ 'is-loading': isLoadingResults }"
+        >
+          Load more
+        </button>
+      </div>
     </div>
 
     <div class="mt-2">
@@ -34,11 +56,14 @@
       </header>
       <div class="card-content">
         <div class="content">
-          <b>{{ provider.city }}</b>, {{ provider.street }} {{ provider.house_number }}
+          <b>{{ provider.city }}</b
+          >, {{ provider.street }} {{ provider.house_number }}
           <br />
           <br />
-          <i>{{ provider.first_name }} is ready to drive up to
-            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i>
+          <i
+            >{{ provider.first_name }} is ready to drive up to
+            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i
+          >
           <br />
         </div>
       </div>
@@ -50,7 +75,9 @@
     </div>
 
     <div v-if="haveMoreResults">
-      <button class="button is-primary is-fullwidth" @click="loadResults" :class="{ 'is-loading': isLoadingResults }">Load more</button>
+      <button class="button is-primary is-fullwidth" @click="loadResults" :class="{ 'is-loading': isLoadingResults }">
+        Load more
+      </button>
     </div>
   </div>
 </template>
@@ -63,15 +90,15 @@ import ServiceProviderMap from "./ServiceProviderMap.vue";
 interface ServiceProviderResponse {
   results: Array<ServiceProvider>;
   has_more: boolean;
-  total_count: number
+  total_count: number;
 }
-
 
 export default defineComponent({
   data() {
     return {
       page: 0,
       queryPLZ: "",
+      rankType: "rank" as "rank" | "distance" | "profile",
       results: [] as Array<ServiceProvider>,
       isLoadingResults: false,
 
@@ -88,8 +115,17 @@ export default defineComponent({
     this.loadResults();
   },
   methods: {
+    async setRankType(event: Event) {
+      let target = event.target as HTMLSelectElement;
+      this.rankType = target.value as "rank" | "distance" | "profile";
+      this.page = 0;
+      this.results = [];
+      this.loadResults();
+    },
     async fetchCraftsmen(page?: number): Promise<ServiceProviderResponse> {
-      return fetch(`/craftsmen/${this.queryPLZ}/detailed?sort=distance&page=${page ?? 0}`).then((response) => response.json());
+      return fetch(`/craftsmen/${this.queryPLZ}/detailed?sort=${this.rankType}&page=${page ?? 0}`).then((response) =>
+        response.json(),
+      );
     },
     async loadResults() {
       console.log("Loading results for query:", this.queryPLZ);
