@@ -52,7 +52,7 @@ async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<i
     let map: &Map = req.app_data().expect("Map not found!");
 
     Ok(HttpResponse::Ok().content_type("application/json").body(
-        if let Some(service_providers) = map.get_service_providers(postalcode.parse().unwrap()) {
+        if let Some(service_providers) = map.ranked_by_score(postalcode.parse().unwrap()) {
             serde_json::to_string(&service_providers).unwrap()
         } else {
             "[]".to_string()
@@ -63,6 +63,7 @@ async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<i
 #[derive(Serialize, Deserialize)]
 struct detailedRequest {
     page: Option<u32>,
+    sort: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -81,7 +82,11 @@ async fn craftsmen_search_detailed(
     let postalcode = path.into_inner();
     let map: &Map = req.app_data().expect("Map not found!");
 
-    let Some(mut service_providers) = map.get_service_providers(postalcode.parse().unwrap()) else {
+    let Some(mut service_providers) = (match query.sort.as_deref() {
+        Some("distance") => map.ranked_by_distance(postalcode.parse().unwrap()),
+        Some("profile") => map.ranked_by_profile(postalcode.parse().unwrap()),
+        _ => map.ranked_by_score(postalcode.parse().unwrap()),
+    }) else {
         return Ok(HttpResponse::Ok()
             .content_type("application/json")
             .body("[]".to_string()));
@@ -103,15 +108,14 @@ async fn craftsmen_search_detailed(
         .map(|sp| sp.unwrap())
         .collect();
 
-    Ok(HttpResponse::Ok()
-        .content_type("application/json")
-        .body(serde_json::to_string(
-            &detailedResponse {
-                has_more,
-                total_count: total_count,
-                results: detailed,
-            }
-        ).unwrap()))
+    Ok(HttpResponse::Ok().content_type("application/json").body(
+        serde_json::to_string(&detailedResponse {
+            has_more,
+            total_count: total_count,
+            results: detailed,
+        })
+        .unwrap(),
+    ))
 }
 
 pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {

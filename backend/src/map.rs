@@ -137,15 +137,18 @@ impl Map {
         };
     }
 
+    fn calculate_distance(point_a: (f64, f64), point_b: (f64, f64)) -> f64 {
+        let sin_prod = point_b.1.sin() * point_a.1.sin();
+        let cos_prod = point_b.1.cos() * point_a.1.cos() * (point_b.0 - point_a.0).cos();
+        (sin_prod + cos_prod).acos() * 6371000.0
+    }
+
     fn calculate_rank(&self, point: (f64, f64), service_provider: &InServiceProvider) -> f64 {
         let quality = self.quality_factor.get(&service_provider.id).unwrap();
         let quality_factor =
             0.4 * quality.profile_description_score + 0.6 * quality.profile_picture_score;
 
-        let sin_prod = service_provider.pos.1.sin() * point.1.sin();
-        let cos_prod =
-            service_provider.pos.1.cos() * point.1.cos() * (service_provider.pos.0 - point.0).cos();
-        let distance = (sin_prod + cos_prod).acos() * 6371000.0;
+        let distance = Map::calculate_distance(point, service_provider.pos);
 
         let default_distance = 80000.0;
         let distance_score = 1.0 - (distance / default_distance);
@@ -171,7 +174,7 @@ impl Map {
         self.service_providers.get(&id).cloned()
     }
 
-    pub fn get_service_providers(&self, postcode: u32) -> Option<Vec<ServiceProviderView>> {
+    fn get_service_providers(&self, postcode: u32) -> Option<Vec<InServiceProvider>> {
         if let Some(code) = self.postcodes.get(&postcode) {
             let tree = match code.postcode_extension_distance_group {
                 PostcodeGroup::GroupA => &self.a_tree,
@@ -183,19 +186,73 @@ impl Map {
                 .locate_all_at_point(&[code.lon, code.lat])
                 .cloned()
                 .collect();
-            let mut ranked: Vec<ServiceProviderView> = in_range
-                .into_iter()
-                .map(|x| ServiceProviderView {
-                    id: x.id,
-                    rankingScore: self.calculate_rank((code.lon, code.lat), &x),
-                    name: x.name,
-                })
-                .collect();
-
-            ranked.sort_by(|a, b| b.rankingScore.total_cmp(&a.rankingScore));
-            return Some(ranked);
+            return Some(in_range);
         } else {
             None
         }
+    }
+
+    pub fn ranked_by_score(&self, postcode: u32) -> Option<Vec<ServiceProviderView>> {
+        if let Some(code) = self.postcodes.get(&postcode) {
+            if let Some(in_range) = self.get_service_providers(postcode) {
+                let mut ranked: Vec<ServiceProviderView> = in_range
+                    .into_iter()
+                    .map(|x| ServiceProviderView {
+                        id: x.id,
+                        rankingScore: self.calculate_rank((code.lon, code.lat), &x),
+                        name: x.name,
+                    })
+                    .collect();
+
+                ranked.sort_by(|a, b| b.rankingScore.total_cmp(&a.rankingScore));
+                return Some(ranked);
+            }
+        }
+
+        return None;
+    }
+
+    pub fn ranked_by_distance(&self, postcode: u32) -> Option<Vec<ServiceProviderView>> {
+        if let Some(code) = self.postcodes.get(&postcode) {
+            if let Some(in_range) = self.get_service_providers(postcode) {
+                let mut ranked: Vec<ServiceProviderView> = in_range
+                    .into_iter()
+                    .map(|x| ServiceProviderView {
+                        id: x.id,
+                        rankingScore: Map::calculate_distance(x.pos, (code.lon, code.lat)),
+                        name: x.name,
+                    })
+                    .collect();
+
+                ranked.sort_by(|a, b| a.rankingScore.total_cmp(&b.rankingScore));
+                return Some(ranked);
+            }
+        }
+
+        return None;
+    }
+
+    pub fn ranked_by_profile(&self, postcode: u32) -> Option<Vec<ServiceProviderView>> {
+        if let Some(code) = self.postcodes.get(&postcode) {
+            if let Some(in_range) = self.get_service_providers(postcode) {
+                let mut ranked: Vec<ServiceProviderView> = in_range
+                    .into_iter()
+                    .map(|x| {
+                        let quality = self.quality_factor.get(&x.id).unwrap();
+                        ServiceProviderView {
+                            id: x.id,
+                            rankingScore: 0.4 * quality.profile_description_score
+                                + 0.6 * quality.profile_picture_score,
+                            name: x.name,
+                        }
+                    })
+                    .collect();
+
+                ranked.sort_by(|a, b| b.rankingScore.total_cmp(&a.rankingScore));
+                return Some(ranked);
+            }
+        }
+
+        return None;
     }
 }
