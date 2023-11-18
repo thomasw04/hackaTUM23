@@ -22,7 +22,7 @@
             @input="loadAutocomplete"
             @keydown.down.prevent="handleArrowDown"
             @keydown.up.prevent="handleArrowUp"
-            @keydown.enter="handleEnter"
+            @keydown.enter="handleEnter(false)"
           />
           <span class="icon is-small is-left">🔍</span>
           <span class="icon is-small is-right">{{}}</span>
@@ -103,7 +103,7 @@ export default defineComponent({
       }
       this.setPreviewCoords();
     },
-    handleEnter(force_router: boolean) {
+    handleEnter(force_router?: boolean) {
       let zipCode =
         this.activeAutocompleteIndex >= 0
           ? this.autocompleteResults[this.activeAutocompleteIndex].zipcode
