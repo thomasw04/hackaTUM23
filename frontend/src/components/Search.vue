@@ -28,6 +28,15 @@
       </p>
     </div>
 
+    <article class="message is-danger" v-if="finalResults.length <= 0 && !isLoadingFinalResults">
+      <div class="message-header">
+        <p>No results</p>
+      </div>
+      <div class="message-body">
+        No results could be found for your search query.
+      </div>
+    </article>
+
     <div class="card" v-for="provider in finalResults" :key="provider.id">
       <header class="card-header">
         <p class="card-header-title">
