@@ -1,16 +1,25 @@
 use std::collections::HashMap;
 
 use rstar::{RTree, RTreeObject, Point, Envelope, PointDistance, AABB};
+use serde::Serialize;
 
-use crate::data::{ServiceProvider, Postcode};
+use crate::data::{ServiceProvider, Postcode, PostcodeGroup, QualityFactor, ServiceProviderView};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct InServiceProvider {
     id: u32,
+    name: String,
     pos: (f64, f64),
     min: (f64, f64),
     max: (f64, f64),
     max_driving_distance: u64,
+    rank: Option<f64>
+}
+
+impl Into<(f64, f64)> for Postcode {
+    fn into(self) -> (f64, f64) {
+        (self.lon, self.lat)
+    }
 }
 
 impl Into<InServiceProvider> for ServiceProvider {
@@ -20,19 +29,17 @@ impl Into<InServiceProvider> for ServiceProvider {
 
         InServiceProvider {
             id: self.id,
+            name: self.first_name + self.last_name.as_str(),
             pos: (self.lon, self.lat),
             min: (self.lon - delta_lon, self.lat - angular_radius),
             max: (self.lon + delta_lon, self.lat + angular_radius),
             max_driving_distance: self.max_driving_distance,
+            rank: None
         }
     }
 }
 
-impl Into<(f64, f64)> for Postcode {
-    fn into(self) -> (f64, f64) {
-        (self.lon, self.lat)
-    }
-}
+
 
 impl RTreeObject for InServiceProvider {
     type Envelope = rstar::AABB<[f64; 2]>;
@@ -70,6 +77,7 @@ impl PointDistance for InServiceProvider {
 #[derive(Clone)]
 pub struct Map {
     postcodes: HashMap<u32, Postcode>,
+    quality_factor: HashMap<u32, QualityFactor>,
     service_providers: HashMap<u32, ServiceProvider>,
     a_tree: RTree<InServiceProvider>,
     b_tree: RTree<InServiceProvider>,
@@ -79,6 +87,7 @@ pub struct Map {
 impl Map {
     pub fn new(
         postcodes: HashMap<u32, Postcode>,
+        quality_factor: HashMap<u32, QualityFactor>,
         service_providers: HashMap<u32, ServiceProvider>
     ) -> Self {
         let converted_providers: Vec<ServiceProvider> = service_providers.clone().into_values().collect();
@@ -97,7 +106,22 @@ impl Map {
             return service_provider;
         }).collect());
 
-        return Map {postcodes, service_providers, a_tree, b_tree, c_tree};
+        return Map {postcodes, quality_factor, service_providers, a_tree, b_tree, c_tree};
+    }
+
+    fn calculate_rank(&self, point: (f64, f64), service_provider: &InServiceProvider) -> f64 {
+        let quality = self.quality_factor.get(&service_provider.id).unwrap();
+        let quality_factor = 0.4 * quality.profile_description_score + 0.6 * quality.profile_picture_score;
+
+        let sin_prod = service_provider.pos.1.sin() * point.1.sin();
+        let cos_prod = service_provider.pos.1.cos() * point.1.cos() * (service_provider.pos.0 - point.0).cos();
+        let distance = (sin_prod + cos_prod).acos() * 6371000.0;
+
+        let default_distance = 80000.0;
+        let distance_score = 1.0 - (distance / default_distance);
+        let distance_weight = if distance > default_distance { 0.01 } else { 0.15 };
+
+        distance_weight * distance_score + (1.0 - distance_weight) * quality_factor
     }
 
     pub fn add_service_provider(&mut self, service_provider: &ServiceProvider) {
@@ -109,16 +133,24 @@ impl Map {
         self.c_tree.insert(tmp.into());
     }
 
-    pub fn get_service_providers(&self, postcode: u32) -> Vec<ServiceProvider> {
+    pub fn get_service_providers(&self, postcode: u32) -> Option<Vec<ServiceProviderView>> {
         if let Some(code) = self.postcodes.get(&postcode) {
-            match code.postcode_extension_distance_group {
-                0 => self.a_tree.locate_all_at_point(&[code.lon, code.lat]).map(|x| self.service_providers.get(&x.id).unwrap().to_owned()).collect(),
-                1 => self.b_tree.locate_all_at_point(&[code.lon, code.lat]).map(|x| self.service_providers.get(&x.id).unwrap().to_owned()).collect(),
-                2 => self.c_tree.locate_all_at_point(&[code.lon, code.lat]).map(|x| self.service_providers.get(&x.id).unwrap().to_owned()).collect(),
-                _ => panic!("Wrong data lol.")
-            }
+
+            let tree = match code.postcode_extension_distance_group {
+                PostcodeGroup::GroupA => &self.a_tree,
+                PostcodeGroup::GroupB => &self.b_tree,
+                PostcodeGroup::GroupC => &self.c_tree
+            };
+
+            let in_range: Vec<InServiceProvider> = tree.locate_all_at_point(&[code.lon, code.lat]).cloned().collect();
+            let mut ranked: Vec<ServiceProviderView> = in_range.into_iter().map(|x| {
+                ServiceProviderView { id: x.id, rankingScore: self.calculate_rank((code.lon, code.lat), &x),  name: x.name }
+            }).collect();
+
+            ranked.sort_by(|a, b| b.rankingScore.total_cmp(&a.rankingScore));
+            return Some(ranked);
         } else {
-            Vec::new()
+            None
         }
     }
 }

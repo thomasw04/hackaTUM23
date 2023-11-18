@@ -45,9 +45,22 @@ async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<S
     let postalcode = path.into_inner();
     let map: &Map = req.app_data().expect("Map not found!");
 
-    let providers = map.get_service_providers(postalcode.parse().unwrap());
+    if let Some(service_providers) = map.get_service_providers(postalcode.parse().unwrap()) {
+        Ok(serde_json::to_string_pretty(&service_providers).unwrap())
+    } else {
+        Ok("[]".to_string())
+    }
+}
 
-    Ok(serde_json::to_string_pretty(&providers).unwrap())
+pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
+    let mut engine: SimSearch<PostcodeInfo> = SimSearch::new();
+
+    for info in postcodes {
+        let search_str = info.zipcode.to_string() + " " + &info.place;
+        engine.insert(info.clone(), &search_str);
+    }
+
+    engine
 }
 
 #[actix_web::main]
@@ -58,9 +71,11 @@ async fn main() -> std::io::Result<()> {
 
     let postcodes = data::postcode_from_file().unwrap();
     let service_providers = data::provider_from_file().unwrap();
-    let map = Map::new(postcodes, service_providers);
+    let quality_factor = data::quality_from_file().unwrap();
 
-    let postcode_engine = data::build_engine(&postcode_info);
+    let map = Map::new(postcodes, quality_factor, service_providers);
+
+    let postcode_engine = build_engine(&postcode_info);
 
     HttpServer::new(move || {
         App::new()
