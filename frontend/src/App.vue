@@ -33,6 +33,7 @@ body {
   height: 3%;
   top: 0;
   filter: drop-shadow(0 0 0.25rem var(--navbar-drop-shadow));
+  z-index: 10000 !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,5 +47,11 @@ body {
   p:not(.always-light) {
     color: #fff !important;
   }
+}
+
+.modal,
+.modal.active {
+  /* We need to be below the navbar, but above the map */
+  z-index: 9999 !important;
 }
 </style>

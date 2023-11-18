@@ -9,7 +9,7 @@
         :radius="searchRadius"
         color="rgba(255,0,0,0.3)"
       />
-      <l-marker :lat-lng="searchPLZCoords as any" />
+      <l-marker :lat-lng="searchPLZCoords as any" color="rgba(255,0,0,1)" />
     </template>
 
     <l-marker
@@ -25,6 +25,10 @@
           <b>{{ sp.city }}</b>
         </p>
         <p class="always-light" style="margin: 0">{{ sp.street }} {{ sp.house_number }}</p>
+
+        <button v-if="editServiceProviderFunc" class="button is-small is-primary" @click="editServiceProvider(sp)">
+          Edit
+        </button>
       </l-popup>
     </l-marker>
   </l-map>
@@ -55,6 +59,10 @@ export default {
     searchRadius: {
       type: Number,
     },
+    editServiceProviderFunc: {
+      type: Function as unknown as () => (sp: ServiceProvider) => void,
+      required: true,
+    },
   },
   data() {
     return {
@@ -63,6 +71,12 @@ export default {
   },
   methods: {
     getNormalCoords,
+    editServiceProvider(sp: ServiceProvider) {
+      if (!this.editServiceProviderFunc) {
+        throw new Error("editServiceProvider is not set");
+      }
+      this.editServiceProviderFunc(sp);
+    },
   },
 };
 </script>

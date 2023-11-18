@@ -1,4 +1,44 @@
 <template>
+  <div class="modal is-active" v-if="editServiceProvider && editItems">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Edit Service Provider</p>
+        <button class="delete" aria-label="close" @click="editServiceProvider = null"></button>
+      </header>
+      <section class="modal-card-body">
+        <div class="field">
+          <label class="label">Max Driving Distance</label>
+          <div class="control">
+            <input class="input" type="number" v-model="editItems.maxDrivingDistance" placeholder="Enter max driving distance" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Profile Picture Score</label>
+          <div class="control">
+            <input class="input" type="number" v-model="editItems.profilePictureScore" placeholder="Enter profile picture score" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Profile Description Score</label>
+          <div class="control">
+            <input class="input" type="number" v-model="editItems.profileDescriptionScore" placeholder="Enter profile description score" />
+          </div>
+        </div>
+        <div v-if="editServiceProviderError">
+          <p class="always-light has-text-danger">{{ editServiceProviderError }}</p>
+          <br />
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-success" :class="{ 'is-loading': editServiceProviderLoading }" @click="saveServiceProvider">
+          Save
+        </button>
+        <button class="button" @click="editServiceProvider = null">Cancel</button>
+      </footer>
+    </div>
+  </div>
+
   <div class="search-page">
     <article class="message is-danger" v-if="results.length <= 0 && !isLoadingResults">
       <div class="message-header">
@@ -10,13 +50,9 @@
       </div>
     </article>
 
-    <ServiceProviderMap
-      :service-providers="results"
-      style="position: relative; min-height: 50vh"
-      :search-p-l-z-coords="[48.249, 11.651]"
-    />
+    <ServiceProviderMap :service-providers="results" style="position: relative; min-height: 50vh" :search-p-l-z-coords="[48.249, 11.651]" :edit-service-provider-func="openEditDialog" />
 
-    <div class="mt-2 columns is-2">
+    <div class="custom-outline mt-2 columns is-2">
       <div class="column">
         <div class="select is-fullwidth" @change="setRankType">
           <select>
@@ -27,15 +63,11 @@
         </div>
       </div>
       <div class="column">
-        <button
-          class="button is-primary is-fullwidth"
-          @click="loadResults"
-          :disabled="isLoadingResults || !haveMoreResults"
-          :class="{ 'is-loading': isLoadingResults }"
-        >
+        <button style="background-color: #0271c2" class="button is-primary is-fullwidth" @click="loadResults" :disabled="isLoadingResults || !haveMoreResults" :class="{ 'is-loading': isLoadingResults }">
           Load more
         </button>
       </div>
+
     </div>
 
     <div class="mt-2">
@@ -55,14 +87,11 @@
       </header>
       <div class="card-content">
         <div class="content">
-          <b>{{ provider.city }}</b
-          >, {{ provider.street }} {{ provider.house_number }}
+          <b>{{ provider.city }}</b>, {{ provider.street }} {{ provider.house_number }}
           <br />
           <br />
-          <i
-            >{{ provider.first_name }} is ready to drive up to
-            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i
-          >
+          <i>{{ provider.first_name }} is ready to drive up to
+            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i>
           <br />
         </div>
       </div>
@@ -103,6 +132,15 @@ export default defineComponent({
 
       haveMoreResults: false,
       totalCount: 0,
+
+      editServiceProvider: null as ServiceProvider | null,
+      editServiceProviderLoading: false,
+      editServiceProviderError: null as string | null,
+      editItems: null as {
+        maxDrivingDistance: number | null;
+        profilePictureScore: number | null;
+        profileDescriptionScore: number | null;
+      } | null,
     };
   },
   components: {
@@ -114,6 +152,46 @@ export default defineComponent({
     this.loadResults();
   },
   methods: {
+    openEditDialog(sp: ServiceProvider) {
+      this.editServiceProvider = sp;
+      this.editItems = {
+        maxDrivingDistance: sp.max_driving_distance,
+        profilePictureScore: null,
+        profileDescriptionScore: null,
+      };
+    },
+    closeEditDialog() {
+      this.editServiceProvider = null;
+      this.editItems = null;
+    },
+    async saveServiceProvider() {
+      if (!this.editServiceProvider || !this.editItems) {
+        throw new Error("editServiceProvider or editItems is not set");
+      }
+      this.editServiceProviderLoading = true;
+      this.editServiceProviderError = null;
+
+      try {
+        let response = await fetch(`/craftman/${this.editServiceProvider.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.editItems),
+        });
+        if (!response.ok) {
+          throw new Error("Server returned not OK while saving the service provider");
+        }
+
+        this.closeEditDialog();
+      } catch (e: unknown) {
+        console.log("Edit error:", e);
+        this.editServiceProviderError = String(e);
+      } finally {
+        this.editServiceProviderLoading = false;
+      }
+    },
+
     async setRankType(event: Event) {
       let target = event.target as HTMLSelectElement;
       this.rankType = target.value as "rank" | "distance" | "profile";
@@ -158,6 +236,13 @@ export default defineComponent({
 .search-page {
   margin: 0 auto;
   padding: 20px;
+}
+
+.custom-outline {
+  background-color: #f8b11e;
+  padding: 1px;
+  border: 1px solid #f8b11e;
+  border-radius: 8px;
 }
 
 .search-results {
