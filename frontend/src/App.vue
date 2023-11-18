@@ -14,13 +14,18 @@ import Map from './components/Map.vue'
     </div>
   </nav>
 
-  <router-view></router-view>
+  <router-view id="#content-container"></router-view>
 </template>
 
 <style>
 @import "../node_modules/bulma/css/bulma.min.css";
 @import "../node_modules/bulma-prefers-dark/css/bulma-prefers-dark.min.css";
 @import "assets/wireframe.css";
+
+body {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: medium;
+}
 
 .navbar {
   position: sticky;

@@ -202,7 +202,6 @@ export default defineComponent({
 
 <style scoped>
 .search-page {
-  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
 }

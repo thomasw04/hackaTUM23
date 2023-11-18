@@ -25,8 +25,12 @@ a:hover {
 body, #app {
   margin: 0;
   padding: 0;
-  min-width: 320px;
   min-height: 100vh;
+}
+#content-container, .search-page {
+  min-width: 320px;
+  max-width: 1024px;
+  width: 60%;
 }
 
 h1 {
@@ -70,3 +74,10 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@media (max-width: 1024px) {
+  #content-container, .search-page {
+    width: 100%;
+  }
+}
+
