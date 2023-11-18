@@ -4,7 +4,7 @@
       <label class="label">Search:</label>
       <form id="search-form" action="/search" @submit.prevent>
         <div id="search-container" class="control has-icons-left has-icons-right is-large" :class="{'is-loading': isLoadingAutocomplete}">
-          <input autofocus id="search-bar" v-model="searchQuery" class="input is-large is-rounded" type="text" placeholder="Postal code" autocomplete="off" @input="loadAutocomplete" @keydown.down.prevent="handleArrowDown" @keydown.up.prevent="handleArrowUp" @keydown.enter="handleEnter" />
+          <input autofocus id="search-bar" v-model="searchQuery" class="input is-large" type="text" placeholder="Postal code" autocomplete="off" @input="loadAutocomplete" @keydown.down.prevent="handleArrowDown" @keydown.up.prevent="handleArrowUp" @keydown.enter="handleEnter" />
           <span class="icon is-small is-left">🔍</span>
           <span class="icon is-small is-right">{{ }}</span>
         </div>
@@ -106,14 +106,14 @@ var alphonso: ServiceProvider = {
 export default defineComponent({
   data() {
     return {
-      searchQuery: '85748',
+      searchQuery: '85748', // just a default value
       autocompleteResults: [] as Array<ZipcodeSearchResultItem>,
       activeAutocompleteIndex: -1,
       isLoadingAutocomplete: false,
       showAutocomplete: false,
       provider: alphonso,
 
-      finalResults: [alphonso] as Array<ServiceProvider>,
+      finalResults: [] as Array<ServiceProvider>,
       finalResultsFor: '',
       isLoadingFinalResults: false,
     };
@@ -219,6 +219,11 @@ export default defineComponent({
 
 .is-active {
   background-color: lightgray;
+}
+
+#search-suggestions {
+  border: solid 1px #CCC;
+  border-top: none;
 }
 
 @media (prefers-color-scheme: dark) {
