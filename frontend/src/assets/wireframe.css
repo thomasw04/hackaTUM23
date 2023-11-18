@@ -2,7 +2,6 @@ html {
   height: 100%;
 }
 body {
-  background-color: #f4f4f4;
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -116,7 +115,6 @@ iframe[name="google_conversion_frame"] {
   }
 }
 .c24m-container {
-  background: #fff;
   border: 1px solid #dcdcdc;
   padding: 16px 10px;
 }
@@ -132,7 +130,6 @@ iframe[name="google_conversion_frame"] {
 }
 #c24m-page-blocking-layer,
 #c24m-page-strict-blocking-layer {
-  background: rgba(0, 0, 0, 0.6);
   position: fixed;
   top: 0;
   bottom: 0;
@@ -194,7 +191,7 @@ select {
   color: #333;
   padding: 0 10px;
   border: 1px solid #dcdcdc;
-  background: #fff;
+
   -webkit-appearance: none;
 }
 .c24m-cart-home {
@@ -234,7 +231,7 @@ select {
   top: 40px;
   right: 10px;
   border: 1px solid #dcdcdc;
-  background: #fff;
+
   width: calc(100% - 22px);
   width: -webkit-calc(100% - 22px);
   z-index: 120;
@@ -289,7 +286,6 @@ select {
   font-weight: 700;
 }
 .c24-contact-layer-home .c24m-contact-slogan-evo {
-  background: #fff;
   text-align: left;
   min-height: initial;
   padding: 10px 0 0;
@@ -629,27 +625,21 @@ a.c24m-cookie-consent-button-secondary {
   display: inline-block;
   width: 18px;
   height: 18px;
-  background: #fff;
+
   border: 1px solid #999;
   box-sizing: border-box;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
 }
-.c24m-cookie-consent-screen-list-entry-header
-  input[type="checkbox"]:checked
-  + span:before {
-  background: #fff
-    url(https://www.check24.de/assets/images/web/svg/haken-darkblue.svg)
-    no-repeat center;
+.c24m-cookie-consent-screen-list-entry-header input[type="checkbox"]:checked + span:before {
+  background: #fff url(https://www.check24.de/assets/images/web/svg/haken-darkblue.svg) no-repeat center;
   background-size: contain;
   border: 1px solid #999;
   width: 18px;
   height: 18px;
 }
-.c24m-cookie-consent-screen-list-entry-header
-  input[type="checkbox"][disabled]:checked
-  + span:before {
+.c24m-cookie-consent-screen-list-entry-header input[type="checkbox"][disabled]:checked + span:before {
   background-color: #b4b4b4;
   border: 1px solid #999;
 }
@@ -689,9 +679,7 @@ a.c24m-cookie-consent-button-secondary {
 .c24m-cookie-consent-screen-list-m-entry {
   margin-bottom: 15px;
 }
-.c24m-cookie-consent-screen-list-m-entry
-  .c24m-cookie-consent-screen-list-entry-header
-  > div:nth-child(2) {
+.c24m-cookie-consent-screen-list-m-entry .c24m-cookie-consent-screen-list-entry-header > div:nth-child(2) {
   line-height: 19px;
   font-size: 12px;
 }
@@ -709,7 +697,6 @@ a.c24m-cookie-consent-button-secondary {
   position: absolute;
   left: 0;
   top: -47px;
-  background: #333;
 }
 .c24m-page.c24m-smb .c24m-cookie {
   top: -103px;
@@ -718,9 +705,15 @@ a.c24m-cookie-consent-button-secondary {
   visibility: hidden;
 }
 .c24m-page.c24m-cookie-transition {
-  -webkit-transition: visibility 0s, top 300ms linear;
-  -o-transition: visibility 0s, top 300ms linear;
-  transition: visibility 0s, top 300ms linear;
+  -webkit-transition:
+    visibility 0s,
+    top 300ms linear;
+  -o-transition:
+    visibility 0s,
+    top 300ms linear;
+  transition:
+    visibility 0s,
+    top 300ms linear;
 }
 .c24m-page.c24m-cookie-animate {
   top: 47px;
@@ -800,7 +793,7 @@ a.c24m-cookie-consent-cookielink:hover {
   top: 40px;
   left: 10px;
   border: 1px solid #dcdcdc;
-  background: #fff;
+
   width: calc(100% - 22px);
   width: -webkit-calc(100% - 22px);
   z-index: 120;
@@ -893,7 +886,7 @@ a.c24m-cookie-consent-cookielink:hover {
   float: right;
   color: #fff;
   margin-top: 10px;
-  background: #e30613;
+
   min-width: 20px;
   padding: 0 2px;
   -webkit-border-radius: 10px;
@@ -954,12 +947,10 @@ header {
   position: relative;
   width: 100%;
   min-height: 40px;
-  background: #063773;
 }
 .c24m-header-content {
   padding: 0 10px;
   position: relative;
-  background: #063773;
 }
 #c24m-header-top {
   height: 42px;
@@ -1055,7 +1046,6 @@ header {
   font-weight: 700;
 }
 .c24m-contact-layer-chatbot .c24m-contact-text-wrapper {
-  background: #ecf7fd;
   border-radius: 17px;
   padding: 40px 20px 14px;
   font-size: 14px;
@@ -1081,9 +1071,7 @@ header {
   text-align: right;
   margin-top: 5px;
 }
-.c24m-contact-layer-chatbot
-  .c24m-contact-text-wrapper:hover
-  .c24m-chatbot-open {
+.c24m-contact-layer-chatbot .c24m-contact-text-wrapper:hover .c24m-chatbot-open {
   color: #c05702;
 }
 .c24m-contact-layer-chatbot a.c24m-contact-layer-link,
@@ -1154,7 +1142,7 @@ header {
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
   border-radius: 8px;
-  background: #e30613;
+
   color: #fff;
   font-size: 12px;
   text-align: center;
@@ -1173,7 +1161,7 @@ header {
   height: 100%;
   padding: 0 0 10px;
   box-sizing: border-box;
-  background: #f4f4f4;
+
   color: #666;
   overflow-x: scroll;
   display: none;
@@ -1211,7 +1199,6 @@ header {
 .c24m-navi .c24m-navi-header-bottom {
   width: 100%;
   position: relative;
-  background: #fff;
 }
 .c24m-navi .c24m-navi-header-bottom span,
 .c24m-navi .c24m-navi-header-bottom a {
@@ -1252,10 +1239,8 @@ header {
   width: 100%;
   padding: 0;
   margin-top: 10px;
-  background: #fff;
 }
 .c24m-navi .c24m-navi-section.c24m-navi-section-logout {
-  background: #f4f4f4;
 }
 .c24m-navi .c24m-navi-section.c24m-navi-section-top {
   margin-top: 0;
@@ -1292,13 +1277,7 @@ header {
   width: 26px;
   margin-top: 8px;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a.c24m-kb-logout-navi
-  span.c24m-navi-svg
-  svg {
+.c24m-navi .c24m-navi-section ul li a.c24m-kb-logout-navi span.c24m-navi-svg svg {
   fill: #005ea8;
 }
 .c24m-navi .c24m-navi-section ul li a span.c24m-navi-element {
@@ -1309,23 +1288,13 @@ header {
   border-bottom: 1px solid #dcdcdc;
   position: relative;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a.c24m-kb-logout-navi
-  span.c24m-navi-element {
+.c24m-navi .c24m-navi-section ul li a.c24m-kb-logout-navi span.c24m-navi-element {
   color: #005ea8;
 }
 .c24m-navi .c24m-navi-section ul li:last-child a span.c24m-navi-element {
   border-bottom: 0;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a
-  span.c24m-navi-element.c24m-navi-element-plain {
+.c24m-navi .c24m-navi-section ul li a span.c24m-navi-element.c24m-navi-element-plain {
   margin-left: 38px;
 }
 .c24m-navi .c24m-navi-section ul li a span.c24m-navi-element-count {
@@ -1350,7 +1319,6 @@ header {
   left: -100%;
 }
 #c24m-nav-slide .c24m-nav-comparisons {
-  background: green;
   position: absolute;
   top: 0;
   left: 100%;
@@ -1366,7 +1334,6 @@ header {
   overflow-x: visible;
 }
 #c24m-nav-slide .c24m-nav-comparisons .c24m-nav-comp-back {
-  background: #fff;
   font-size: 16px;
   line-height: 18px;
   padding: 13px 0 13px 35px;
@@ -1378,27 +1345,20 @@ header {
   margin: 0;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li {
-  background: #fff;
   font-size: 16px;
   line-height: 20px;
   color: #333;
   display: block;
   position: relative;
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  span:not(.c24-nav-ele-new-wrapper):not(.c24-nav-ele-new) {
+#c24m-nav-slide .c24m-nav-comparisons ul li span:not(.c24-nav-ele-new-wrapper):not(.c24-nav-ele-new) {
   display: block;
   padding: 18px 10px 12px 10px;
-  background: #f4f4f4;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li span a {
   color: #333;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li ul li {
-  background: #fff;
   padding-left: 10px;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li ul.c24m-nav-comp-item-sub li {
@@ -1428,12 +1388,7 @@ header {
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li ul li a:before,
 #c24m-nav-slide .c24m-nav-comparisons .c24m-nav-comp-back:before,
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a
-  span.c24m-navi-element:not(.c24m-navi-logout):before,
+.c24m-navi .c24m-navi-section ul li a span.c24m-navi-element:not(.c24m-navi-logout):before,
 .c24m-navi .c24m-navi-header-bottom :not(#c24m-kb-login-navi) span:before,
 .c24m-navi .c24m-navi-header-bottom a:before {
   content: "";
@@ -1451,35 +1406,13 @@ header {
   left: 15px;
   transform: rotate(180deg);
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  ul:not(.c24m-nav-comp-item-sub)
-  li:last-child
-  a {
+#c24m-nav-slide .c24m-nav-comparisons ul li ul:not(.c24m-nav-comp-item-sub) li:last-child a {
   border-bottom: 0;
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  ul.c24m-nav-comp-item-sub
-  li
-  ul
-  li:last-child
-  a {
+#c24m-nav-slide .c24m-nav-comparisons ul li ul.c24m-nav-comp-item-sub li ul li:last-child a {
   border-bottom: 1px solid #dcdcdc;
 }
-#c24m-nav-slide
-  .c24m-nav-comparisons
-  ul
-  li
-  ul.c24m-nav-comp-item-sub
-  li:last-child
-  ul
-  li:last-child
-  a {
+#c24m-nav-slide .c24m-nav-comparisons ul li ul.c24m-nav-comp-item-sub li:last-child ul li:last-child a {
   border-bottom: 0;
 }
 #c24m-nav-slide .c24m-nav-comparisons .c24m-nav-comp-subject {
@@ -1490,19 +1423,14 @@ header {
   padding-bottom: 5px;
   border-bottom: 1px solid #dcdcdc;
 }
-.c24m-navi
-  .c24m-navi-section
-  ul
-  li
-  a.c24m-kb-logout-navi
-  span.c24m-navi-logout {
+.c24m-navi .c24m-navi-section ul li a.c24m-kb-logout-navi span.c24m-navi-logout {
   border: 0;
 }
 #c24m-nav-slide .c24m-nav-comparisons ul li span.c24m-nav-subline-gold {
   color: #b39656;
   font-size: 12px;
   padding: 0;
-  background: #fff;
+
   line-height: 16px;
 }
 .c24m-nav-comp-item li a .c24-nav-ele-new-wrapper {
@@ -1652,8 +1580,6 @@ header {
 #c24m-takeOver-Arrow {
   height: 11px;
   width: 11px;
-  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIyLjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkViZW5lXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHdpZHRoPSIxMDAuMXB4IiBoZWlnaHQ9IjEwMHB4IiB2aWV3Qm94PSIwIDAgMTAwLjEgMTAwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxMDAuMSAxMDA7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbDojQjRCNEI0O30KPC9zdHlsZT4KPHBhdGggY2xhc3M9InN0MCIgZD0iTTk3LjksODdsLTcxLTcxLjFsNTIuNSwxYzIuMSwwLDQtMC43LDUuNS0yLjJjMS41LTEuNCwyLjMtMy4yLDIuMy01LjRjMC4xLTIuMi0wLjctNC4xLTIuMi01LjcKCWMtMS40LTEuNC0zLjEtMi4xLTUuMi0yLjJMNy44LDBDNS42LTAuMSwzLjcsMC42LDIuMiwyLjJTLTAuMSw1LjYsMCw3LjhsMS4yLDcxLjhjMC4yLDIuMiwxLDQsMi41LDUuNWMxLjUsMS40LDMuMywyLjEsNS41LDIKCWMyLjEtMC4xLDQtMC45LDUuNC0yLjRjMS41LTEuNSwyLjItMy4zLDIuMS01LjZsLTEtNTIuNmw3MS4xLDcxLjNjMS42LDEuNiwzLjUsMi4zLDUuOCwyLjNjMi4zLDAsNC4xLTAuOSw1LjYtMi41CgljMS4zLTEuNSwxLjktMy4zLDEuOS01LjNDMTAwLDkwLjIsOTkuMyw4OC40LDk3LjksODd6Ii8+Cjwvc3ZnPgo=)
-    no-repeat center center;
   -webkit-background-size: 11px 11px;
   background-size: 11px 11px;
   position: absolute;
@@ -1752,7 +1678,7 @@ header {
 .hits-suggest {
   font-family: Arial, sans-serif;
   border: 1px solid #eee;
-  background: #fff;
+
   z-index: 10013;
   position: absolute;
   width: 100%;
@@ -1814,8 +1740,7 @@ header {
 .hits-takeover-arrow {
   height: 14px;
   width: 14px;
-  background: url(https://search.check24.de/suche/img/takeover-arrow.svg)
-    no-repeat center center;
+  background: url(https://search.check24.de/suche/img/takeover-arrow.svg) no-repeat center center;
   -webkit-background-size: 14px 14px;
   background-size: 14px 14px;
   position: absolute;
@@ -1836,12 +1761,11 @@ header {
 .c24m-sab {
   display: block;
   cursor: pointer;
-  background: #ffbb1c;
+
   color: #333;
   min-height: 56px;
 }
 .c24m-sab.c24m-sab-v2 {
-  background: #fff;
   min-height: 80px;
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
@@ -1849,7 +1773,6 @@ header {
   z-index: 101;
 }
 .c24m-sab.c24m-sab-rsn {
-  background: #ecf7fd;
 }
 .c24m-sab.c24m-sab-hide {
   display: none;
@@ -2012,12 +1935,11 @@ header {
 .c24m-sab {
   display: block;
   cursor: pointer;
-  background: #ffbb1c;
+
   color: #333;
   min-height: 56px;
 }
 .c24m-sab.c24m-sab-v2 {
-  background: #fff;
   min-height: 80px;
   -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1);
@@ -2025,7 +1947,6 @@ header {
   z-index: 101;
 }
 .c24m-sab.c24m-sab-rsn {
-  background: #ecf7fd;
 }
 .c24m-sab.c24m-sab-hide {
   display: none;
@@ -2193,7 +2114,7 @@ header {
   top: 0;
   left: 0;
   z-index: 20001;
-  background: #f4f4f4;
+
   min-height: 100%;
 }
 .c24-uli-loginlayer-iframe {
@@ -2205,7 +2126,6 @@ header {
   user-select: none;
   -o-user-select: none;
   z-index: 20002;
-  background: #f4f4f4;
 }
 .c24-uli-loginlayer-close {
   width: 11px;
@@ -2214,8 +2134,6 @@ header {
   position: absolute;
   top: 0;
   left: 0;
-  background: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNTguMiAxMDAiIHhtbDpzcGFjZT0icHJlc2VydmUiPiA8cG9seWdvbiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9IjE2LjQsNTAgNTguMiw4LjIgNTAsMCAwLDUwIDUwLDEwMCA1OC4yLDkxLjggIj48L3BvbHlnb24+IDwvc3ZnPg==)
-    no-repeat;
   background-size: 12px;
   background-position: 15px;
   cursor: pointer;
@@ -2224,7 +2142,7 @@ header {
 .c24-uli-loginlayer-header {
   width: 100%;
   height: 40px;
-  background: #063773;
+
   margin-bottom: 10px;
 }
 .c24-uli-loginlayer-header-logo {
@@ -2257,7 +2175,7 @@ header {
 }
 .c24m-mylists .c24m-mylists-count {
   color: #fff;
-  background: #e30613;
+
   min-width: 10px;
   padding: 0 2px;
   line-height: 14px;

@@ -22,11 +22,17 @@ a:hover {
   color: #535bf2;
 }
 
-body, #app {
+body,
+#app {
   margin: 0;
   padding: 0;
-  min-width: 320px;
   min-height: 100vh;
+}
+#content-container,
+.search-page {
+  min-width: 320px;
+  max-width: 1024px;
+  width: 60%;
 }
 
 h1 {
@@ -57,7 +63,6 @@ button:focus-visible {
   padding: 2em;
 }
 
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -68,5 +73,12 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 1024px) {
+  #content-container,
+  .search-page {
+    width: 100%;
   }
 }
