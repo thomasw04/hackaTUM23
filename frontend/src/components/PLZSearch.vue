@@ -39,7 +39,6 @@
     </div>
 
     <div class="mt-2">
-      <progress v-if="isLoadingResults" class="progress is-large"></progress>
       <p v-if="results.length > 0">
         Showing {{ results.length }} out of {{ totalCount }} results for <b>{{ queryPLZ }}</b>
       </p>
@@ -180,18 +179,10 @@ export default defineComponent({
   border-top: none;
 }
 
-.progress {
-  background-image: linear-gradient(to right, #00d1b2 30%, #ededed 30%) !important;
-}
-
 @media (prefers-color-scheme: dark) {
   .is-active {
     background-color: #4f4f4f !important;
     color: #aecdff !important;
-  }
-
-  .progress {
-    background-image: linear-gradient(to right, #00d1b2 30%, #363636 30%) !important;
   }
 }
 </style>
