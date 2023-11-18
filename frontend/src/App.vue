@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import Map from './components/Map.vue'
-</script>
-
 <template>
   <nav class="navbar" style="background-color: #063773;">
     <div class="navbar-brand">

@@ -90,7 +90,6 @@ export default defineComponent({
 
       setTimeout(() => {
         this.finalResults = Array(Math.floor(Math.random() * 15)).fill(alphonso);
-        this.finalResultsFor = queryCopy;
         this.isLoadingFinalResults = false;
         this.$router.push({ query: { q: queryCopy } });
       }, Math.random() * 1250);
@@ -103,7 +102,6 @@ export default defineComponent({
           .then(response => response.json());
         // Assuming the response data is an array of ServiceProvider objects
         this.finalResults = response;
-        this.finalResultsFor = queryCopy;
         this.$router.push({ query: { q: queryCopy } });
       } catch (e: any) {
         console.log("Final results error:", e)
