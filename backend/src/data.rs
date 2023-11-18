@@ -72,25 +72,25 @@ pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Postcode {
     #[serde(deserialize_with = "from_str_u32")]
-    postcode: u32,
-    lon: f64,
-    lat: f64,
+    pub postcode: u32,
+    pub lon: f64,
+    pub lat: f64,
     #[serde(deserialize_with = "from_str_u8")]
-    postcode_extension_distance_group: u8,
+    pub postcode_extension_distance_group: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ServiceProvider {
-    id: u32,
-    first_name: String,
-    last_name: String,
-    city: String,
-    street: String,
+    pub id: u32,
+    pub first_name: String,
+    pub last_name: String,
+    pub city: String,
+    pub street: String,
     #[serde(deserialize_with = "from_str_u32")]
-    house_number: u32,
-    lon: f64,
-    lat: f64,
-    max_driving_distance: u32
+    pub house_number: u32,
+    pub lon: f64,
+    pub lat: f64,
+    pub max_driving_distance: u64
 }
 
 const INITIAL_POSTCODE_DATA: &'static str = include_str!("../data/postcode.json");

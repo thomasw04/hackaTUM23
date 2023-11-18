@@ -1,8 +1,12 @@
-use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use std::collections::HashMap;
+
+use actix_web::{get, post, web::{self}, App, HttpRequest, HttpResponse, HttpServer, Responder, Result};
 use data::PostcodeInfo;
+use map::Map;
 use serde::{Deserialize, Serialize};
 use simsearch::SimSearch;
 mod data;
+mod map;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -36,11 +40,25 @@ async fn zipcode_search(req: HttpRequest, query: web::Query<searchRequest>) -> i
         .body(serde_json::to_string(&res).unwrap())
 }
 
+#[get("/craftsmen/{postalcode}")]
+async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<String> {
+    let postalcode = path.into_inner();
+    let map: &Map = req.app_data().expect("Map not found!");
+
+    let providers = map.get_service_providers(postalcode.parse().unwrap());
+    
+    Ok(serde_json::to_string_pretty(&providers).unwrap())
+}
+ 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json").expect(
         "Could not read postcode data from file."
     );
+
+    let postcodes = data::postcode_from_file().unwrap_or(HashMap::new());
+    let service_providers = data::provider_from_file().unwrap_or(HashMap::new());
+    let map = Map::new(postcodes, service_providers);
 
     let postcode_engine = data::build_engine(&postcode_info);
 
@@ -49,6 +67,7 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
             .service(echo)
             .app_data(postcode_engine.clone())
+            .app_data(map.clone())
             .service(zipcode_search)
             .route("/hey", web::get().to(manual_hello))
     })
