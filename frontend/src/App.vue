@@ -28,6 +28,7 @@ import Map from './components/Map.vue'
 
 <style>
 @import "../node_modules/bulma/css/bulma.min.css";
+@import "../node_modules/bulma-prefers-dark/css/bulma-prefers-dark.min.css";
 
 .navbar {
   position: sticky;
@@ -50,5 +51,12 @@ import Map from './components/Map.vue'
 
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
+}
+
+@media (prefers-color-scheme: dark) {
+  a.navbar-item:focus, a.navbar-item:focus-within, a.navbar-item:hover {
+      background-color: #2e2e2e !important;
+      color: #aecdff !important;
+  }
 }
 </style>

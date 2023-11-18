@@ -202,23 +202,10 @@ export default defineComponent({
   background-color: lightgray;
 }
 
-.loading-animation {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  border-top-color: #333;
-  animation: spin 1s infinite linear;
-  margin-left: 5px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
+@media (prefers-color-scheme: dark) {
+  .is-active {
+    background-color: #4f4f4f !important;
+    color: #aecdff !important;
   }
 }
 </style>
