@@ -41,15 +41,17 @@ async fn zipcode_search(req: HttpRequest, query: web::Query<searchRequest>) -> i
 }
 
 #[get("/craftsmen/{postalcode}")]
-async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<String> {
+async fn craftsmen_search(req: HttpRequest, path: web::Path<String>) -> Result<impl Responder> {
     let postalcode = path.into_inner();
     let map: &Map = req.app_data().expect("Map not found!");
 
-    if let Some(service_providers) = map.get_service_providers(postalcode.parse().unwrap()) {
-        Ok(serde_json::to_string_pretty(&service_providers).unwrap())
-    } else {
-        Ok("[]".to_string())
-    }
+    Ok(HttpResponse::Ok().content_type("application/json").body(
+        if let Some(service_providers) = map.get_service_providers(postalcode.parse().unwrap()) {
+            serde_json::to_string(&service_providers).unwrap()
+        } else {
+            "[]".to_string()
+        },
+    ))
 }
 
 pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
