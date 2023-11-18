@@ -9,3 +9,7 @@ export interface ServiceProvider {
   lat: number;
   max_driving_distance: number;
 }
+
+export function getNormalCoords(sp: ServiceProvider): [number, number] {
+  return [(sp.lat * 180) / Math.PI, (sp.lon * 180) / Math.PI];
+}

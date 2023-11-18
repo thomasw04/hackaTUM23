@@ -35,7 +35,9 @@
               :key="result.zipcode"
               :class="{ 'is-active': index === activeAutocompleteIndex }"
             >
-              <a class="navbar-item" @click="selectZipcode(index)"> {{ result.zipcode }} {{ result.place }} </a>
+              <a class="navbar-item" @click="selectZipcode(index)" @mouseenter="setPreviewCoords(index)">
+                {{ result.zipcode }} {{ result.place }}
+              </a>
             </li>
           </ul>
         </div>
@@ -56,7 +58,7 @@ import { ZipcodeSearchResultItem } from "../models/autocomplete.ts";
 export default defineComponent({
   data() {
     return {
-      searchQuery: "85748", // just a default value
+      searchQuery: "",
       autocompleteResults: [] as Array<ZipcodeSearchResultItem>,
       activeAutocompleteIndex: -1,
       isLoadingAutocomplete: false,
@@ -120,7 +122,9 @@ export default defineComponent({
       }
     },
     setPreviewCoords(index?: number) {
-      let item = this.autocompleteResults[index ?? this.activeAutocompleteIndex];
+      let idx = index ?? this.activeAutocompleteIndex;
+      if (idx < 0) return;
+      let item = this.autocompleteResults[idx];
       this.previewCoords = [item.latitude, item.longitude];
     },
   },

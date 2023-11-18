@@ -43,7 +43,7 @@ body {
     color: #aecdff !important;
   }
 
-  p {
+  p:not(.always-light) {
     color: #fff !important;
   }
 }
