@@ -5,9 +5,7 @@ RUN USER=root cargo new --bin usr/src/backend
 WORKDIR /usr/src/backend
 
 COPY ./Cargo.toml ./Cargo.lock[t] ./
-COPY ./data/postcode.json ./data/postcode.json
-COPY ./data/quality_factor_score.json ./data/quality_factor_score.json 
-COPY ./data/service_provider_profile.json ./data/service_provider_profile.json
+COPY ./data ./datad
 COPY ./.cargo/config ./.cargo/config
 COPY .env .env
 
