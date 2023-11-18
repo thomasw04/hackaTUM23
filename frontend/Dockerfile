@@ -16,6 +16,9 @@ RUN echo "http://localhost:3000 {" > Caddyfile && \
 	echo "  route /craft* {" >> Caddyfile && \
 	echo "    reverse_proxy backend:8000" >> Caddyfile && \
 	echo "  }" >> Caddyfile && \
+	echo "  route /zipcode* {" >> Caddyfile && \
+	echo "    reverse_proxy backend:8000" >> Caddyfile && \
+	echo "  }" >> Caddyfile && \
 	echo "  file_server" >> Caddyfile && \
 	echo "}" >> Caddyfile
 
