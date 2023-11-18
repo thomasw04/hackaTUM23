@@ -37,7 +37,7 @@
       </div>
     </article>
 
-    <div class="card" v-for="provider in finalResults" :key="provider.id">
+    <div class="card" style="margin: 1em 0; padding: 0" v-for="provider in finalResults" :key="provider.id">
       <header class="card-header">
         <p class="card-header-title">
           {{ provider.first_name }} {{ provider.last_name }}
@@ -50,15 +50,17 @@
       </header>
       <div class="card-content">
         <div class="content">
-          <b>{{ provider.city }}</b>
-          {{ provider.street }} {{   provider.house_number }}
+          <b>{{ provider.city }}</b>,
+          {{ provider.street }} {{ provider.house_number }}
+          <br>
+          <i>{{ provider.first_name }} is ready to drive up to {{Math.floor(provider.max_driving_distance / 1000)}}km</i>
           <br>
         </div>
       </div>
       <footer class="card-footer">
-        <a href="#" class="card-footer-item">Reserve slot</a>
-        <a href="#" class="card-footer-item">Message</a>
-        <a href="#" class="card-footer-item">Remember</a>
+        <a @click.prevent href="#" class="card-footer-item">Book</a>
+        <a @click.prevent href="#" class="card-footer-item">Message</a>
+        <a @click.prevent href="#" class="card-footer-item">Remember</a>
       </footer>
     </div>
 
@@ -104,7 +106,7 @@ var alphonso: ServiceProvider = {
 export default defineComponent({
   data() {
     return {
-      searchQuery: '',
+      searchQuery: '85748',
       autocompleteResults: [] as Array<ZipcodeSearchResultItem>,
       activeAutocompleteIndex: -1,
       isLoadingAutocomplete: false,
@@ -118,6 +120,12 @@ export default defineComponent({
   },
   components: {
     Map,
+  },
+  mounted() {
+    // Get query parameter from the router/URL
+    this.searchQuery = this.$route.query.q?.toString() ?? '';
+
+    this.loadResults()
   },
   methods: {
     async loadAutocomplete() {
@@ -147,6 +155,7 @@ export default defineComponent({
         this.finalResultsFor = queryCopy;
         this.isLoadingFinalResults = false;
         this.showAutocomplete = false;
+        this.$router.push({ query: { q: queryCopy } });
       }, Math.random() * 1250);
 
       return;
@@ -159,6 +168,7 @@ export default defineComponent({
         this.finalResults = response;
         this.finalResultsFor = queryCopy;
         this.showAutocomplete = false;
+        this.$router.push({ query: { q: queryCopy } });
       } catch (e: any) {
         console.log("Final results error:", e)
       } finally {

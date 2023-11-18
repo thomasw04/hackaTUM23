@@ -8,9 +8,10 @@ import Map from './components/Map.vue'
 const router = createRouter({
 	history: createWebHistory(),
 	routes: [
-		{ path: '/', component: Search },
+		{ path: '/', redirect: '/search?q=85748' },
+		{ path: '/search', component: Search},
 		{ path: '/map', component: Map }
-	]
+	],
 })
 
 createApp(App).use(router).mount('#app')
