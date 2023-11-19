@@ -170,7 +170,7 @@ impl Map {
     fn calculate_rank(&self, point: (f64, f64), service_provider: &InServiceProvider) -> f64 {
         let quality = self.quality_factor.get(&service_provider.id).unwrap();
         let quality_factor =
-            0.4 * quality.profile_description_score + 0.6 * quality.profile_picture_score;
+            0.6 * quality.profile_description_score + 0.4 * quality.profile_picture_score;
 
         let distance = Map::calculate_distance(point, service_provider.pos);
 
@@ -316,8 +316,8 @@ impl Map {
                     let quality = self.quality_factor.get(&x.id).unwrap();
                     ServiceProviderView {
                         id: x.id,
-                        rankingScore: 0.4 * quality.profile_description_score
-                            + 0.6 * quality.profile_picture_score,
+                        rankingScore: 0.6 * quality.profile_description_score
+                            + 0.4 * quality.profile_picture_score,
                         name: x.name,
                     }
                 })
