@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::sync::RwLock;
 
 use actix_web::patch;
@@ -117,6 +118,7 @@ struct DetailedResponse {
     has_more: bool,
     total_count: usize,
     results: Vec<ServiceProvider>,
+    postcode_info: Option<PostcodeInfo>,
 }
 
 #[get("/craftsmen/{postalcode}/detailed")]
@@ -124,14 +126,15 @@ async fn craftsmen_search_detailed(
     path: web::Path<String>,
     query: web::Query<DetailedRequest>,
     data: Data<RwLock<Map>>,
+    postcode_info_map: Data<RwLock<HashMap<u32, PostcodeInfo>>>,
 ) -> Result<impl Responder> {
-    let postalcode = path.into_inner();
+    let postalcode: u32 = path.into_inner().parse().unwrap();
     let map = data.read().unwrap();
 
     let Some(mut service_providers) = (match query.sort.as_deref() {
-        Some("distance") => map.ranked_by_distance(postalcode.parse().unwrap()),
-        Some("profile") => map.ranked_by_profile(postalcode.parse().unwrap()),
-        _ => map.ranked_by_score(postalcode.parse().unwrap()),
+        Some("distance") => map.ranked_by_distance(postalcode),
+        Some("profile") => map.ranked_by_profile(postalcode),
+        _ => map.ranked_by_score(postalcode),
     }) else {
         return Ok(HttpResponse::Ok()
             .content_type("application/json")
@@ -154,11 +157,15 @@ async fn craftsmen_search_detailed(
         .map(|sp| sp.unwrap())
         .collect();
 
+    let postcode_info = postcode_info_map.read().unwrap();
+    let postcode_details = postcode_info.get(&postalcode);
+
     Ok(HttpResponse::Ok().content_type("application/json").body(
         serde_json::to_string(&DetailedResponse {
             has_more,
             total_count: total_count,
             results: detailed,
+            postcode_info: postcode_details.map(|x| x.clone()),
         })
         .unwrap(),
     ))
@@ -182,6 +189,11 @@ async fn main() -> std::io::Result<()> {
     let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json")
         .expect("Could not read postcode data from file.");
 
+    let postcode_to_info: HashMap<u32, PostcodeInfo> = postcode_info
+        .iter()
+        .map(|pci| (pci.zipcode, pci.clone()))
+        .collect();
+
     let postcodes = data::postcode_from_file().unwrap();
     let service_providers = data::provider_from_file().unwrap();
     let quality_factor = data::quality_from_file().unwrap();
@@ -192,12 +204,15 @@ async fn main() -> std::io::Result<()> {
         service_providers,
     )));
 
+    let postcode_to_info = Data::new(RwLock::new(postcode_to_info));
+
     let postcode_engine = build_engine(&postcode_info);
 
     HttpServer::new(move || {
         App::new()
             .app_data(postcode_engine.clone())
             .app_data(Data::clone(&map))
+            .app_data(Data::clone(&postcode_to_info))
             .service(zipcode_search)
             .service(craftsmen_search)
             .service(craftsmen_search_detailed)

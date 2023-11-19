@@ -10,19 +10,34 @@
         <div class="field">
           <label class="label">Max Driving Distance</label>
           <div class="control">
-            <input class="input" type="number" v-model="editItems.maxDrivingDistance" placeholder="Enter max driving distance" />
+            <input
+              class="input"
+              type="number"
+              v-model="editItems.maxDrivingDistance"
+              placeholder="Enter max driving distance"
+            />
           </div>
         </div>
         <div class="field">
           <label class="label">Profile Picture Score</label>
           <div class="control">
-            <input class="input" type="number" v-model="editItems.profilePictureScore" placeholder="Enter profile picture score" />
+            <input
+              class="input"
+              type="number"
+              v-model="editItems.profilePictureScore"
+              placeholder="Enter profile picture score"
+            />
           </div>
         </div>
         <div class="field">
           <label class="label">Profile Description Score</label>
           <div class="control">
-            <input class="input" type="number" v-model="editItems.profileDescriptionScore" placeholder="Enter profile description score" />
+            <input
+              class="input"
+              type="number"
+              v-model="editItems.profileDescriptionScore"
+              placeholder="Enter profile description score"
+            />
           </div>
         </div>
         <div v-if="editServiceProviderError">
@@ -31,7 +46,11 @@
         </div>
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-success" :class="{ 'is-loading': editServiceProviderLoading }" @click="saveServiceProvider">
+        <button
+          class="button is-success"
+          :class="{ 'is-loading': editServiceProviderLoading }"
+          @click="saveServiceProvider"
+        >
           Save
         </button>
         <button class="button" @click="editServiceProvider = null">Cancel</button>
@@ -50,7 +69,12 @@
       </div>
     </article>
 
-    <ServiceProviderMap :service-providers="results" style="position: relative; min-height: 50vh" :search-p-l-z-coords="[48.249, 11.651]" :edit-service-provider-func="openEditDialog" />
+    <ServiceProviderMap
+      :service-providers="results"
+      style="position: relative; min-height: 50vh"
+      :search-p-l-z-coords="mapCoords"
+      :edit-service-provider-func="openEditDialog"
+    />
 
     <div class="custom-outline mt-2 columns is-2">
       <div class="column">
@@ -63,16 +87,24 @@
         </div>
       </div>
       <div class="column">
-        <button style="background-color: #0271c2" class="button is-primary is-fullwidth" @click="loadResults" :disabled="isLoadingResults || !haveMoreResults" :class="{ 'is-loading': isLoadingResults }">
+        <button
+          style="background-color: #0271c2"
+          class="button is-primary is-fullwidth"
+          @click="loadResults"
+          :disabled="isLoadingResults || !haveMoreResults"
+          :class="{ 'is-loading': isLoadingResults }"
+        >
           Load more
         </button>
       </div>
-
     </div>
 
     <div class="mt-2">
       <p v-if="results.length > 0">
-        Showing {{ results.length }} out of {{ totalCount }} results for <b>{{ queryPLZ }}</b>
+        Showing {{ results.length }} out of {{ totalCount }} results for
+        <b
+          >{{ queryPLZ }}<template v-if="centerCityName">&nbsp;{{ centerCityName }}</template></b
+        >
       </p>
     </div>
 
@@ -87,11 +119,14 @@
       </header>
       <div class="card-content">
         <div class="content">
-          <b>{{ provider.city }}</b>, {{ provider.street }} {{ provider.house_number }}
+          <b>{{ provider.city }}</b
+          >, {{ provider.street }} {{ provider.house_number }}
           <br />
           <br />
-          <i>{{ provider.first_name }} is ready to drive up to
-            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i>
+          <i
+            >{{ provider.first_name }} is ready to drive up to
+            {{ Math.floor(provider.max_driving_distance / 1000) }}km</i
+          >
           <br />
         </div>
       </div>
@@ -119,6 +154,12 @@ interface ServiceProviderResponse {
   results: Array<ServiceProvider>;
   has_more: boolean;
   total_count: number;
+  postcode_info: {
+    zipcode: number;
+    place: string;
+    latitude: number;
+    longitude: number;
+  } | null;
 }
 
 export default defineComponent({
@@ -132,6 +173,9 @@ export default defineComponent({
 
       haveMoreResults: false,
       totalCount: 0,
+
+      mapCoords: [48.249, 11.651],
+      centerCityName: "",
 
       editServiceProvider: null as ServiceProvider | null,
       editServiceProviderLoading: false,
@@ -222,6 +266,9 @@ export default defineComponent({
         if (this.haveMoreResults) {
           this.page++;
         }
+        let coords = currentResults.postcode_info;
+        this.mapCoords = coords ? [coords.latitude, coords.longitude] : [48.249, 11.651];
+        this.centerCityName = coords?.place.toString() ?? "";
       } catch (e: unknown) {
         console.log("Results fetching error:", e);
       } finally {
