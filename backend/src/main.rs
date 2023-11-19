@@ -186,6 +186,8 @@ pub fn build_engine(postcodes: &Vec<PostcodeInfo>) -> SimSearch<PostcodeInfo> {
 async fn main() -> std::io::Result<()> {
     env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
 
+    println!("Initializing web server...");
+
     let postcode_info = data::postcode_info_from_file("data/zipcodes.de.json")
         .expect("Could not read postcode data from file.");
 
@@ -207,6 +209,11 @@ async fn main() -> std::io::Result<()> {
     let postcode_to_info = Data::new(RwLock::new(postcode_to_info));
 
     let postcode_engine = build_engine(&postcode_info);
+
+    println!("Setup done.");
+
+    println!("In the docker setup, the backend is exposed at port 3000.");
+    println!("You can visit the frontend at http://localhost/");
 
     HttpServer::new(move || {
         App::new()
