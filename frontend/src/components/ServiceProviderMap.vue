@@ -3,13 +3,10 @@
     <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"></l-tile-layer>
 
     <template v-if="searchPLZCoords">
-      <l-circle-marker
-        v-if="searchRadius"
-        :lat-lng="searchPLZCoords as any"
-        :radius="searchRadius"
-        color="rgba(255,0,0,0.3)"
-      />
-      <l-marker :lat-lng="searchPLZCoords as any" color="rgba(255,0,0,1)" />
+      <l-circle-marker v-if="searchRadius" :lat-lng="searchPLZCoords as any" :radius="searchRadius" />
+      <l-marker :lat-lng="searchPLZCoords as any" :z-index-offset="5000">
+        <l-icon icon-url="marker-icon-2x.png" :icon-size="[25, 41]" />
+      </l-marker>
     </template>
 
     <l-marker
@@ -35,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { LMap, LTileLayer, LMarker, LCircleMarker, LPopup } from "@vue-leaflet/vue-leaflet";
+import { LMap, LIcon, LTileLayer, LMarker, LCircleMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import { ServiceProvider, getNormalCoords } from "../models/results";
 
@@ -44,6 +41,7 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
+    LIcon,
     LPopup,
     LCircleMarker,
   },
