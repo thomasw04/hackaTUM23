@@ -132,6 +132,9 @@ async fn craftsmen_search_detailed(
     let postalcode: u32 = path.into_inner().parse().unwrap();
     let map = data.read().unwrap();
 
+    let postcode_info = postcode_info_map.read().unwrap();
+    let postcode_details = postcode_info.get(&postalcode);
+
     let Some(mut service_providers) = (match query.sort.as_deref() {
         Some("distance") => map.ranked_by_distance(postalcode),
         Some("profile") => map.ranked_by_profile(postalcode),
@@ -139,7 +142,15 @@ async fn craftsmen_search_detailed(
     }) else {
         return Ok(HttpResponse::Ok()
             .content_type("application/json")
-            .body("[]".to_string()));
+            .body(
+                serde_json::to_string(&DetailedResponse {
+                    has_more: false,
+                    total_count: 0,
+                    results: vec![],
+                    postcode_info: postcode_details.map(|x| x.clone()),
+                })
+                .unwrap(),
+            ));
     };
 
     let total_count = service_providers.len();
@@ -157,9 +168,6 @@ async fn craftsmen_search_detailed(
         .filter(|sp| sp.is_some())
         .map(|sp| sp.unwrap())
         .collect();
-
-    let postcode_info = postcode_info_map.read().unwrap();
-    let postcode_details = postcode_info.get(&postalcode);
 
     Ok(HttpResponse::Ok().content_type("application/json").body(
         serde_json::to_string(&DetailedResponse {
