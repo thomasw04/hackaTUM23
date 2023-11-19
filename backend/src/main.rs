@@ -47,7 +47,8 @@ async fn craftsmen_search(
     let map = data.read().unwrap();
 
     Ok(HttpResponse::Ok().content_type("application/json").body(
-        if let Some(service_providers) = map.ranked_by_score(postalcode.parse().unwrap()) {
+        if let Some(mut service_providers) = map.ranked_by_score(postalcode.parse().unwrap()) {
+            service_providers.truncate(20);
             serde_json::to_string(&service_providers).unwrap()
         } else {
             "[]".to_string()
