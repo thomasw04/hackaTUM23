@@ -5,6 +5,6 @@ WORKDIR /usr/src/backend
 COPY . .
 
 RUN cargo build --release
-EXPOSE 8000
+EXPOSE 3000
 
 CMD ["./target/release/backend"]
