@@ -7,7 +7,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: thomasw04/hackatum23
-  PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
   build-and-push-images:
@@ -32,5 +31,4 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker buildx create --use
-          docker buildx bake --set *.platform=${{ env.PLATFORMS }} --push
+          docker compose build --push
