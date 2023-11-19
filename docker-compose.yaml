@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   frontend:
-    image: hackatum-2023-frontend
+    image: ghcr.io/thomasw04/hackatum23/frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -12,7 +12,7 @@ services:
       - backend
 
   backend:
-    image: hackatum-2023-backend
+    image: ghcr.io/thomasw04/hackatum23/backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile

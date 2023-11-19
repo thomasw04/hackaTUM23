@@ -1,4 +1,4 @@
-name: Create and publish Docker image
+name: Create and publish Docker images
 
 on:
   push:
@@ -7,11 +7,10 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64
-
+  PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
-  build-and-push-image:
+  build-and-push-images:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,11 +20,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      -  name: Set up QEMU
-         uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -34,17 +30,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: ${{ env.PLATFORMS }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push Docker images
+        run: |
+          docker-compose build
+          docker tag frontend:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
+          docker tag backend:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
